@@ -47,7 +47,7 @@ struct Students{
 };
 
 //Global Variables
-static int Total_std = 0;
+static int Total_std;
 
 
 int main(){
@@ -84,6 +84,7 @@ int main(){
 
 void add_details()
 {
+    Total_std = 0;
     while(Total_std == 0)
     {
         printf("Enter the number of Students, You want to add details of: ");
@@ -106,12 +107,14 @@ void add_details()
         S[i].Roll_no = 0;
         while(S[i].Roll_no == 0)        //This Handles TypeError
         {
+            printf("Roll Number: ");
             S[i].Roll_no = get_integer();
         }
 
         S[i].Class = 0;
         while(S[i].Class == 0)      //This Handles TypeError
         {
+            printf("Class: ");
             S[i].Class = get_integer();
         }
 
