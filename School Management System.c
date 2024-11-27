@@ -34,6 +34,8 @@ Function:
 int get_integer();      //for input error handelling
 void print_in_table(struct Students S[]);      // prints detail of students in a table
 int cnt_digits(int num);        // Useful for printing data in table
+void print_space(int n);         // Useful for printing data in table
+
 void add_details();
 
 //Global Structure
@@ -161,7 +163,43 @@ int get_integer(){ // Returns the int if int was inputed else return 0
 
 void print_in_table(struct Students S[])
 {
-    //...
+    printf("SN");
+    print_space(4);
+
+    printf("First Name");
+    print_space(4);
+
+    printf("Last Name");
+    print_space(5);
+
+    printf("Roll No.");
+    print_space(3);
+
+    printf("Class");
+    print_space(3);
+
+    prinrf("Section");
+    print_space(3);
+
+    printf("Course")
+    print_space(3);
+
+
+    for(int i=0 ; i<Total_std ; i++)
+    {
+        printf("%d",i+1);
+        print_space(4-cnt_digits(i+1));
+
+        printf("%s",S[i].f_name);
+        print_space(14-strlen(S[i].f_name));
+
+        printf("%s",S[i].l_name);
+        print_space(14-strlen(S[i].l_name));
+
+        printf("%s",S[i].f_Name);
+        print_space(14-strlen(S[i].f_Name));
+
+    }
 }
 
 int cnt_digits(int num)
@@ -173,4 +211,13 @@ int cnt_digits(int num)
         cnt+=1;
     }
     return cnt;
+}
+
+
+void print_space(int n)
+{
+    for(int i=0; i<n ; i++)
+    {
+        printf(" ");
+    }
 }
