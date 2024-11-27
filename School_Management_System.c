@@ -31,6 +31,17 @@ Function:
 #include <stdlib.h>         // Include stdlib.h for atoi() and exit()
 
 
+//Global Structure
+struct Students{
+    char f_name[20];
+    char l_name[20];
+    int roll_no;
+    int class;
+    char section[5];
+    char course[30];
+};
+
+
 //UDF Declearation
 int get_integer();      //for input error handelling
 void print_in_table(struct Students S[] , int num);      // prints detail of students in a table
@@ -38,16 +49,6 @@ int cnt_digits(int num);        // Useful for printing data in table
 void print_space(int n);         // Useful for printing data in table
 
 void add_details();
-
-//Global Structure
-struct Students{
-    char f_name[20];
-    char l_name[20];
-    int Roll_no;
-    int Class;
-    char section[5];
-    char course[30];
-};
 
 //Global Variables
 static int Total_std = 0;           //Stores Number of students in No_std.txt file
@@ -100,37 +101,41 @@ void add_details()
     printf("\nEnter Details Of Students:\n");
     for(int i=0 ; i<std ; i++)
     {
-        printf("For Student %d",i+1);
+        printf("\n\nFor Student %d:\n",i+1);
         
         printf("First Name: ");
-        scanf("%20[^\n]s", S[i].f_name);
+        getchar();
+        scanf("%20[^\n]", S[i].f_name);
 
         printf("Last Name: ");
-        scanf("%20[^\n]s", S[i].l_name);
-
-        S[i].Roll_no = 0;
-        while(S[i].Roll_no == 0)        //This Handles TypeError
+        getchar();
+        scanf("%20[^\n]", S[i].l_name);
+        
+        S[i].roll_no = 0;
+        while(S[i].roll_no == 0)        //This Handles TypeError
         {
             printf("Roll Number: ");
-            S[i].Roll_no = get_integer();
+            S[i].roll_no = get_integer();
         }
 
-        S[i].Class = 0;
-        while(S[i].Class == 0)      //This Handles TypeError
+        S[i].class = 0;
+        while(S[i].class == 0)      //This Handles TypeError
         {
             printf("Class: ");
-            S[i].Class = get_integer();
+            S[i].class = get_integer();
         }
 
         printf("Section: ");
+        getchar();
         scanf("%5[^\n]s", S[i].section);
 
         printf("Course: ");
+        getchar();
         scanf("%30[^\n]s", S[i].course);
     }
 
     printf("\n\nStored Data Of Students:\n");
-    print_in_table(S);
+    print_in_table(S, std );
 
 
 
@@ -183,8 +188,7 @@ void print_in_table(struct Students S[], int num)
     printf("Section");
     print_space(3);
 
-    printf("Course");
-    print_space(3);
+    printf("Course\n");
 
 
     for(int i=0 ; i<num ; i++)
@@ -197,11 +201,19 @@ void print_in_table(struct Students S[], int num)
 
         printf("%s",S[i].l_name);
         print_space(14-strlen(S[i].l_name));
+        
+        printf("%d",S[i].roll_no);
+        print_space(9-cnt_digits(S[i].roll_no));
+
+        printf("%d",S[i].class);
+        print_space(9-cnt_digits(S[i].class));
 
         printf("%s",S[i].section);
         print_space(14-strlen(S[i].section));
 
+        printf("%s", S[i].course);
 
+        printf("\n");
 
     }
 }
