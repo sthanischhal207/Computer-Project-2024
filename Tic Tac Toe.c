@@ -32,6 +32,7 @@ int main()
         game();
         printf("\n\nDo You want To Play Again? (y/n): ");
         fflush(stdin); //flushes out any new lines
+        //getchar();        //Use this if Play again Code Doesn't runs
     }
     while(tolower(getchar())=='y');
     return 0;
@@ -54,7 +55,7 @@ void game()     //Contains Main Game Logic
 
         printf("Enter the number: ");
         char local_choice[30];      
-        scanf(" %[^\n]s", local_choice);   //Takes a single char // space before %c to clear any new line // or we can use fflush(stdin);
+        scanf(" %[^\n]", local_choice);   //Takes a single char // space before %c to clear any new line // or we can use fflush(stdin);
 
         int is_valid = 1;
 
@@ -62,7 +63,7 @@ void game()     //Contains Main Game Logic
         {
             if(!isdigit(local_choice[k]))
             {
-                is_valid = 0; // if any enity except int is entered makes it invalid 
+                is_valid = 0; // if any enity except int is entered makes it invalid
                 break; 
             }
         }

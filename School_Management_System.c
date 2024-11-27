@@ -27,12 +27,13 @@ Function:
 
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
+#include <ctype.h>          // Include ctype.h for isdigit()
+#include <stdlib.h>         // Include stdlib.h for atoi() and exit()
 
 
 //UDF Declearation
 int get_integer();      //for input error handelling
-void print_in_table(struct Students S[]);      // prints detail of students in a table
+void print_in_table(struct Students S[] , int num);      // prints detail of students in a table
 int cnt_digits(int num);        // Useful for printing data in table
 void print_space(int n);         // Useful for printing data in table
 
@@ -49,7 +50,8 @@ struct Students{
 };
 
 //Global Variables
-static int Total_std;
+static int Total_std = 0;           //Stores Number of students in No_std.txt file
+static int std = 0;                //stores Number of students added just now
 
 
 int main(){
@@ -86,17 +88,17 @@ int main(){
 
 void add_details()
 {
-    Total_std = 0;
-    while(Total_std == 0)
+    std = 0;
+    while(std == 0)
     {
         printf("Enter the number of Students, You want to add details of: ");
-        Total_std = get_integer();      //Returned Value is 0 unless integer is given
+        std = get_integer();      //Returned Value is 0 unless integer is given
     }
 
-    struct Students S[Total_std];
+    struct Students S[std];
 
     printf("\nEnter Details Of Students:\n");
-    for(int i=0 ; i<Total_std ; i++)
+    for(int i=0 ; i<std ; i++)
     {
         printf("For Student %d",i+1);
         
@@ -161,7 +163,7 @@ int get_integer(){ // Returns the int if int was inputed else return 0
 }
 
 
-void print_in_table(struct Students S[])
+void print_in_table(struct Students S[], int num)
 {
     printf("SN");
     print_space(4);
@@ -178,14 +180,14 @@ void print_in_table(struct Students S[])
     printf("Class");
     print_space(3);
 
-    prinrf("Section");
+    printf("Section");
     print_space(3);
 
-    printf("Course")
+    printf("Course");
     print_space(3);
 
 
-    for(int i=0 ; i<Total_std ; i++)
+    for(int i=0 ; i<num ; i++)
     {
         printf("%d",i+1);
         print_space(4-cnt_digits(i+1));
@@ -196,8 +198,10 @@ void print_in_table(struct Students S[])
         printf("%s",S[i].l_name);
         print_space(14-strlen(S[i].l_name));
 
-        printf("%s",S[i].f_Name);
-        print_space(14-strlen(S[i].f_Name));
+        printf("%s",S[i].section);
+        print_space(14-strlen(S[i].section));
+
+
 
     }
 }
