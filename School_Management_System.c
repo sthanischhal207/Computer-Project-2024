@@ -27,7 +27,7 @@ Function:
 
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>          // Include ctype.h for isdigit()
+#include <ctype.h>          // Include ctype.h for isdigit() , tolower()
 #include <stdlib.h>         // Include stdlib.h for atoi() and exit()
 
 
@@ -47,14 +47,16 @@ FILE *fp;
 //UDF Declearation
 void add_details();
 void view_stored_data();
+void edit_details();
+void delete_details();
 
 
 int get_integer();      //for input error handelling
 void print_in_table(struct Students S[] , int num);      // prints detail of students in a table
 int cnt_digits(int num);        // Useful for printing data in table
 void print_space(int n);         // Useful for printing data in table
-int if_no_data();
-void send_stdNo();
+int if_no_data();              // Useful for checking if data is present in file or not
+void send_stdNum();             //Updates num of students in file
 
 
 
@@ -80,7 +82,7 @@ int main(){
         fclose(fp);
 
         again:
-            printf("\n\nChoose:\n1) Add Student Details\n2) View Stored Data of Students \n3) Edit Student Details \n4) Delete Student Data\n5)Exit\n");    
+            printf("\n\nChoose:\n1) Add Student Details\n2) View Stored Data of Students \n3) Edit Student Details \n4) Delete Student Data\n5)Sort Data\n6)Exit\n");    
             int choice;
             if((choice = get_integer())!=0)
             {
@@ -92,25 +94,33 @@ int main(){
                     {
                         view_stored_data();
                     }
-                    else{goto again;}
+                    else{add_details();}
                 }
                 else if(choice == 3){
                     if(if_no_data() == 0)
                     {
-                        //edit_details();
+                        edit_details();
                     }
-                    else{goto again;}
+                    else{add_details();}
                     
                 }
                 else if(choice == 4)
                 {
                     if(if_no_data() == 0)
                     {
-                        //delete_details();
+                        delete_details();
                     }
-                    else{goto again;}         
+                    else{add_details();}
                 }
                 else if(choice == 5)
+                {
+                    if(if_no_data() == 0)
+                    {
+                        //delete_details();
+                    }
+                    else{add_details();}
+                }
+                else if(choice == 6)
                 {
                     exit(0);
                 }
@@ -121,8 +131,7 @@ int main(){
             }
     }
 
-
-    send_stdNo();
+    send_stdNum();
 
     return 0;
 
@@ -147,11 +156,11 @@ void add_details()
         
         printf("First Name: ");
         getchar();
-        scanf("%20[^\n]", S[i].f_name);
+        scanf("%20[^\n]s", S[i].f_name);
 
         printf("Last Name: ");
         getchar();
-        scanf("%20[^\n]", S[i].l_name);
+        scanf("%20[^\n]s", S[i].l_name);
         
         S[i].roll_no = 0;
         while(S[i].roll_no == 0)        //This Handles ValueError
@@ -176,39 +185,187 @@ void add_details()
         scanf("%30[^\n]s", S[i].course);
     }
 
-    fp = fopen("std_details.txt","a");
+    fp = fopen("std_details.txt","ab");
     if(fp == NULL) {
         printf("Error opening file!\n");
         exit(1);
     }
-    for(int i=0 ; i<Total_std ; i++)
-    {
-        fprintf(fp ,"%s %s %d %d %s %s \n", S[i].f_name , S[i].l_name , S[i].roll_no , S[i].class , S[i].section , S[i].course);
-    }
-
+    fwrite(S, sizeof(struct Students), std, fp);
     fclose(fp);
 
     printf("\n\nStored Data Of Students:\n");
     Total_std += std;
-    send_stdNo();       //Update Number of std to file
+    send_stdNum();       //Update Number of std to file
     print_in_table(S, std );
 }
 
+
+
+void edit_details()
+{
+   struct Students S[Total_std];
+
+    fp = fopen("std_details.txt","rb");
+    if(fp == NULL) {
+        printf("Error opening file!\n");
+        exit(1);
+    }
+    // Read the structure from the file
+    fread(&S, sizeof(struct Students), Total_std, fp);
+    fclose(fp);
+
+    fp = fopen("std_details.txt","wb");
+    if(fp == NULL) {
+        printf("Error opening file!\n");
+        exit(1);
+    }
+
+    do
+    {    
+        printf("\n\n----------Stored Student Details----------\n\n");
+        print_in_table(S,Total_std);
+
+        char f_name[20];
+        printf("\nEnter First Name of std you want to edit: ");
+        getchar();
+        scanf("%20[^\n]s", f_name);
+            
+        int roll_no = 0;
+        while(roll_no == 0)        //This Handles ValueError
+        {
+            printf("His/Her Roll Number: ");
+            roll_no = get_integer();
+        }
+
+        for(int i=0 ; i<Total_std ; i++)
+        {
+            if(S[i].roll_no == roll_no && strcmpi(S[i].f_name,f_name) == 0)
+            {
+                printf("\n\nEnter New Details:\n");
+                printf("First Name: ");
+                getchar();
+                scanf("%20[^\n]s", S[i].f_name);
+
+                printf("Last Name: ");
+                getchar();
+                scanf("%20[^\n]s", S[i].l_name);
+                
+                S[i].roll_no = 0;
+                while(S[i].roll_no == 0)        //This Handles ValueError
+                {
+                    printf("Roll Number: ");
+                    S[i].roll_no = get_integer();
+                }
+
+                S[i].class = 0;
+                while(S[i].class == 0)      //This Handles ValueError
+                {
+                    printf("Class: ");
+                    S[i].class = get_integer();
+                }
+
+                printf("Section: ");
+                getchar();
+                scanf("%5[^\n]s", S[i].section);
+
+                printf("Course: ");
+                getchar();
+                scanf("%30[^\n]s", S[i].course);
+
+                fwrite(S, sizeof(struct Students), Total_std, fp);
+                printf("\n\n-----Details Updated-----");
+                break;
+            }
+            else if(i == Total_std-1)
+            {
+                printf("\n\nStudent Not Found\n");
+            }
+        }
+        printf("\n\nDo you want to edit another student? (y/n): ");
+        getchar();
+    }
+    while(tolower(getchar())=='y');
+
+    fclose(fp);
+    
+}
+
+
+
+void delete_details()
+{
+    struct Students S[Total_std];
+
+    fp = fopen("std_details.txt","rb");
+    if(fp == NULL) {
+        printf("Error opening file!\n");
+        exit(1);
+    }
+    // Read the structure from the file
+    fread(&S, sizeof(struct Students), Total_std, fp);
+    fclose(fp);
+
+    fp = fopen("std_details.txt","wb");
+    if(fp == NULL) {
+        printf("Error opening file!\n");
+        exit(1);
+    }
+
+    do
+    {    
+        printf("\n\n----------Stored Student Details----------\n\n");
+        print_in_table(S,Total_std);
+
+        char f_name[20];
+        printf("\nEnter First Name of std you want to delete: ");
+        getchar();
+        scanf("%20[^\n]s", f_name);
+            
+        int roll_no = 0;
+        while(roll_no == 0)        //This Handles ValueError
+        {
+            printf("His/Her Roll Number: ");
+            roll_no = get_integer();
+        }
+
+        for(int i=0 ; i<Total_std ; i++)
+        {
+            if(S[i].roll_no == roll_no && strcmpi(S[i].f_name,f_name) == 0)
+            {
+                for(int j=i ; j<(Total_std-i) ; j++)
+                {
+                    S[j] = S[j+1];
+                }
+                Total_std--;
+                fwrite(S, sizeof(struct Students), Total_std, fp);
+                printf("\n\n-----Details deleted-----");
+                break;
+            }
+            else if(i == Total_std-1)
+            {
+                printf("\n\nStudent Not Found\n");
+            }
+        }
+        printf("\n\nDo you want to Delete detail of another student? (y/n): ");
+        getchar();
+    }
+    while(tolower(getchar())=='y');
+    send_stdNum();
+    fclose(fp);
+}
 
 
 void view_stored_data()
 {
     struct Students S[Total_std];
 
-    fp = fopen("std_details.txt","r");
+    fp = fopen("std_details.txt","rb");
     if(fp == NULL) {
         printf("Error opening file!\n");
         exit(1);
     }
-    for(int i=0 ; i<Total_std ; i++)
-    {
-          fscanf(fp ,"%s %s %d %d %s %s \n", S[i].f_name , S[i].l_name , &S[i].roll_no , &S[i].class , S[i].section , S[i].course);     
-    }
+    // Read the structure from the file
+    fread(&S, sizeof(struct Students), Total_std, fp);
     fclose(fp);
 
     print_in_table(S,Total_std);
@@ -239,7 +396,7 @@ int get_integer(){ // Returns the int if int was inputed else return 0
     {
         return num;
     }
-    printf("\n\n-----Choose an Integer-----");
+    printf("\n\n-----Choose an Integer-----\n\n");
     return 0;
 }
 
@@ -325,7 +482,6 @@ int if_no_data()
         printf("\nNo Data Are Stored.\nDo you Want to add data?(y/n)");
         getchar();
         if(getchar() == 'y'){
-            add_details();
             return 1;
         }
     }
@@ -333,7 +489,7 @@ int if_no_data()
 }
 
 
-void send_stdNo()
+void send_stdNum()
 {
     //Sending Total no of std to std_number.txt
     fp = fopen("std_number.txt","w");
