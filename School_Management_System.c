@@ -26,7 +26,7 @@ void find_details();
 
 
 int get_integer();      //for input error handelling
-void print_in_table(struct Students S[] , int num);      // prints detail of students in a table
+void print_in_table(struct Students S[] , int num ,char sn);      // prints detail of students in a table
 void table_head();
 int cnt_digits(int num);        // Useful for printing data in table
 void print_space(int n);         // Useful for printing data in table
@@ -116,7 +116,7 @@ int main(){
                 printf("\n\n--------Invalid Choice--------\n");
                 continue;       //Skips the Breaking below, Hence Continuing the Loop
             }
-            printf("Do You want to Continu to HOME PAGE? (y/n): ");
+            printf("\n\nDo You want to Continu to HOME PAGE? (y/n): ");
             getchar();
             if(tolower(getchar())!='y')
             {
@@ -195,7 +195,7 @@ void add_details()
         send_stdNum();       //Update Number of std to file
 
         table_head();
-        print_in_table(S, std);
+        print_in_table(S, std,'y');
         printf("\n\nDo you want to add details of more students? (y/n): ");
         getchar();
     }
@@ -219,7 +219,7 @@ void view_stored_data()
     fclose(fp);
 
     table_head();
-    print_in_table(S,Total_std);
+    print_in_table(S,Total_std,'y');
 }
 
 
@@ -248,7 +248,7 @@ void edit_details()
     {    
         printf("\n\n----------Stored Student Details----------\n\n");
         table_head();
-        print_in_table(S,Total_std);
+        print_in_table(S,Total_std,'y');
 
         char f_name[20];
         printf("\nEnter First Name of std you want to edit: ");
@@ -340,7 +340,7 @@ void delete_details()
     {    
         printf("\n\n----------Stored Student Details----------\n\n");
         table_head();
-        print_in_table(S,Total_std);
+        print_in_table(S,Total_std,'y');
 
         char f_name[20];
         printf("\nEnter First Name of std you want to delete: ");
@@ -397,7 +397,7 @@ void find_details()
     fclose(fp);
 
 
-    int choice, i, found=0;
+    int choice, i, cnt;
     while(1){
         printf("\n\nWhich element do you want use to search for student?\n");
         printf("1) First Name\n2) Last Name\n3) Roll Number\n4) Class\n5) Section\n6) Course\n");
@@ -410,15 +410,18 @@ void find_details()
                 scanf("%20[^\n]s", f_name);
                 printf("\n\n");
                 table_head();
+                cnt =0;
                 for(i=0 ; i<Total_std ; i++)
                 {
                     if(strcasecmp(S[i].f_name,f_name)==0)
                     {
-                        print_in_table(&S[i],1);
-                        found = 1;
+                        cnt++;
+                        printf("%d",cnt);
+                        print_space(6-cnt_digits(cnt));
+                        print_in_table(&S[i],1,'n');
                     }
                 }
-                if(found != 1)
+                if(cnt ==0 )
                 {
                     printf("\n\n--------Student Not Found--------\n");
                 }
@@ -431,15 +434,18 @@ void find_details()
                 scanf("%20[^\n]s", l_name);
                 printf("\n\n");
                 table_head();
+                cnt=0;
                 for(i=0 ; i<Total_std ; i++)
                 {
                     if(strcasecmp(S[i].l_name,l_name)==0)
                     {
-                        print_in_table(&S[i],1);
-                        found = 1;
+                        cnt++;
+                        printf("%d",cnt);
+                        print_space(6-cnt_digits(cnt));
+                        print_in_table(&S[i],1,'n');
                     }
                 }
-                if(found != 1)
+                if(cnt ==0 )
                 {
                     printf("\n\n--------Student Not Found--------\n");
                 }
@@ -453,15 +459,18 @@ void find_details()
                 }
                 printf("\n\n");
                 table_head();
+                cnt=0;
                 for(i=0 ; i<Total_std ; i++)
                 {
                     if(S[i].roll_no == roll_no)
                     {
-                        print_in_table(&S[i],1);
-                        found = 1;
+                        cnt++;
+                        printf("%d",cnt);
+                        print_space(6-cnt_digits(cnt));
+                        print_in_table(&S[i],1,'n');
                     }
                 }
-                if(found != 1)
+                if(cnt ==0 )
                 {
                     printf("\n\n--------Student Not Found--------\n");
                 }
@@ -476,15 +485,18 @@ void find_details()
                 }
                 printf("\n\n");
                 table_head();
+                cnt=0;
                 for(i=0 ; i<Total_std ; i++)
                 {
                     if(S[i].class == class)
                     {
-                        print_in_table(&S[i],1);
-                        found = 1;
+                        cnt++;
+                        printf("%d",cnt);
+                        print_space(6-cnt_digits(cnt));
+                        print_in_table(&S[i],1,'n');
                     }
                 }
-                if(found != 1)
+                if(cnt ==0 )
                 {
                     printf("\n\n--------Student Not Found--------\n");
                 }
@@ -498,15 +510,18 @@ void find_details()
                 scanf("%20[^\n]s", section);
                 printf("\n\n");
                 table_head();
+                cnt=0;
                 for(i=0 ; i<Total_std ; i++)
                 {
                     if(strcasecmp(S[i].section,section)==0)
                     {
-                        print_in_table(&S[i],1);
-                        found = 1;
+                        cnt++;
+                        printf("%d",cnt);
+                        print_space(6-cnt_digits(cnt));
+                        print_in_table(&S[i],1,'n');
                     }
                 }
-                if(found != 1)
+                if(cnt ==0 )
                 {
                     printf("\n\n--------Student Not Found--------\n");
                 }
@@ -519,15 +534,18 @@ void find_details()
                 scanf("%20[^\n]s", course);
                 printf("\n\n");
                 table_head();
+                cnt=0;
                 for(i=0 ; i<Total_std ; i++)
                 {
                     if(strcasecmp(S[i].course,course)==0)
                     {
-                        print_in_table(&S[i],1);
-                        found = 1;
+                        cnt++;
+                        printf("%d",cnt);
+                        print_space(6-cnt_digits(cnt));
+                        print_in_table(&S[i],1,'n');
                     }
                 }
-                if(found != 1)
+                if(cnt ==0 )
                 {
                     printf("\n\n--------Student Not Found--------\n");
                 }
@@ -536,7 +554,7 @@ void find_details()
                 printf("\n\n--------Invalid Choice--------\n");
                 continue;       //Skips the Breaking below, Hence Continuing the Loop
             }
-            printf("Do You want to find another student? (y/n): ");
+            printf("\nDo You want to find another student? (y/n): ");
             getchar();
             if(tolower(getchar())!='y')
             {
@@ -554,7 +572,7 @@ void sort_data_f_name(struct Students S[])
 {
     int i,j;
     struct Students temp;
-    for(i=0 ; i<Total_std-1 ; i++)
+    for(i=0 ; i<Total_std ; i++)
     {
         for(j=0 ; j<Total_std ; j++)
         {
@@ -579,7 +597,7 @@ void sort_data_f_name(struct Students S[])
 
 int get_integer(){ // Returns the int if int was inputed else return 0
 
-    char local_choice[30];      
+    char local_choice[30];
     scanf(" %30[^\n]s", local_choice);   // space before %30[^\n]s to clear any new line // or we can use fflush(stdin);
 
     int is_valid = 1;
@@ -611,7 +629,7 @@ int get_integer(){ // Returns the int if int was inputed else return 0
 
 void table_head()
 {
-    printf("SN");
+    printf("\nSN");
     print_space(4);
 
     printf("First Name");
@@ -633,12 +651,15 @@ void table_head()
 }
 
 
-void print_in_table(struct Students S[], int num)
+void print_in_table(struct Students S[], int num, char sn)
 {
     for(int i=0 ; i<num ; i++)
     {
-        printf("%d",i+1);
-        print_space(6-cnt_digits(i+1));
+        if(sn == 'y')   //Added to fix SN display while finding students
+        {
+            printf("%d",i+1);
+            print_space(6-cnt_digits(i+1));
+        }
 
         printf("%s",S[i].f_name);
         print_space(14-strlen(S[i].f_name));
