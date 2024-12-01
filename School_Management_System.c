@@ -14,17 +14,21 @@ struct Students{
     char course[30];
 };
 
+
 //Global FILE Pointer
 FILE *fp;
 
+
 //UDF Declearation
+
+//Primary UDF
 void add_details();
 void view_stored_data();
 void edit_details();
 void delete_details();
 void find_details();
 
-
+//Secondary UDF
 int get_integer();      //for input error handelling
 void print_in_table(struct Students S[] , int num ,char sn);      // prints detail of students in a table
 void table_head();
@@ -32,8 +36,7 @@ int cnt_digits(int num);        // Useful for printing data in table
 void print_space(int n);         // Useful for printing data in table
 int if_no_data();              // Useful for checking if data is present in file or not
 void send_stdNum();             //Updates num of students in file
-
-void sort_data_f_name(struct Students S[]);
+void sort_data_f_name(struct Students S[]);     //Sort s data in file based on first name
 
 //Global Variables
 static int Total_std = 0;           //Stores Number of students in No_std.txt file
@@ -49,7 +52,7 @@ int main(){
         //Getting Total Number of Students from file, If no data is stored nthg is scaned hence total std remains 0
         fp = fopen("std_number.txt","r");
         if (fp == NULL) {
-            printf("Error opening file!\n");
+            printf("\nError opening file!\n Make Sure you have created std_number.txt  and std_details.txt in the same Folder.\n");
             return 1;
         }
             fscanf(fp,"%d",&Total_std);
@@ -61,7 +64,7 @@ int main(){
 
             fp = fopen("std_details.txt","rb");
             if(fp == NULL) {
-                printf("Error opening file!\n");
+                printf("\nError opening file!\n Make Sure you have created std_number.txt  and std_details.txt in the same Folder.\n");
                 exit(1);
             }
             // Read the structure from the file
@@ -125,7 +128,7 @@ int main(){
         }
     }
 
-    send_stdNum();
+    send_stdNum();  //Send the number of students to the server
     return 0;
 
 }
@@ -211,7 +214,7 @@ void view_stored_data()
 
     fp = fopen("std_details.txt","rb");
     if(fp == NULL) {
-        printf("Error opening file!\n");
+        printf("\nError opening file!\n Make Sure you have created std_number.txt  and std_details.txt in the same Folder.\n");
         exit(1);
     }
     // Read the structure from the file
@@ -230,7 +233,7 @@ void edit_details()
 
     fp = fopen("std_details.txt","rb");
     if(fp == NULL) {
-        printf("Error opening file!\n");
+        printf("\nError opening file!\n Make Sure you have created std_number.txt  and std_details.txt in the same Folder.\n");
         exit(1);
     }
     // Read the structure from the file
@@ -240,7 +243,7 @@ void edit_details()
 
     fp = fopen("std_details.txt","wb");
     if(fp == NULL) {
-        printf("Error opening file!\n");
+        printf("\nError opening file!\n Make Sure you have created std_number.txt  and std_details.txt in the same Folder.\n");
         exit(1);
     }
 
@@ -323,7 +326,7 @@ void delete_details()
 
     fp = fopen("std_details.txt","rb");
     if(fp == NULL) {
-        printf("Error opening file!\n");
+        printf("\nError opening file!\n Make Sure you have created std_number.txt  and std_details.txt in the same Folder.\n");
         exit(1);
     }
     // Read the structure from the file
@@ -332,7 +335,7 @@ void delete_details()
 
     fp = fopen("std_details.txt","wb");
     if(fp == NULL) {
-        printf("Error opening file!\n");
+        printf("\nError opening file!\n Make Sure you have created std_number.txt  and std_details.txt in the same Folder.\n");
         exit(1);
     }
 
@@ -389,7 +392,7 @@ void find_details()
 
     fp = fopen("std_details.txt","rb");
     if(fp == NULL) {
-        printf("Error opening file!\n");
+        printf("\nError opening file!\n Make Sure you have created std_number.txt  and std_details.txt in the same Folder.\n");
         exit(1);
     }
     // Read the structure from the file
@@ -586,7 +589,7 @@ void sort_data_f_name(struct Students S[])
     }
     fp = fopen("std_details.txt","wb");
     if(fp == NULL) {
-        printf("Error opening file!\n");
+        printf("\nError opening file!\n Make Sure you have created std_number.txt  and std_details.txt in the same Folder.\n");
         exit(1);
     }
     fwrite(S, sizeof(struct Students), Total_std, fp);
@@ -725,7 +728,7 @@ void send_stdNum()
     //Sending Total no of std to std_number.txt
     fp = fopen("std_number.txt","w");
     if(fp == NULL) {
-        printf("Error opening file!\n");
+        printf("\nError opening file!\n Make Sure you have created std_number.txt  and std_details.txt in the same Folder.\n");
         exit(1);
     }
     fprintf(fp,"%d", Total_std);
