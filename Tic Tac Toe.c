@@ -1,7 +1,9 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
+#include <ctype.h>          // Include ctype.h for isdigit() , tolower()
+#include <stdlib.h>         // Include stdlib.h for atoi() and exit()
 
+
+//UDF DECLEARATION
 void graphics();
 void game();
 void replace_box(int i, int j);
@@ -10,6 +12,8 @@ void board_reset();
 int num_check(int n);
 int get_integer();
 
+
+//Global 2D Array representing Board
 static char board[5][65] = {
     "   |   |                    1 | 2 | 3 ",
     "-----------                -----------",
@@ -18,21 +22,20 @@ static char board[5][65] = {
     "   |   |                    7 | 8 | 9 ",
 };
 
-static int data[9]; // Stores the number which have already been choosen
-static int cnt=0;   // Stores how many number have been choosen
-static int choice;  // Globally stores the value choosen by players
+static int data[9];     // Stores the number which have already been choosen
+static int cnt=0;       // Stores how many number have been choosen
 
 
 int main()
 {
     do{
-        board_reset();  //resets the board every time game starts
+        board_reset();      //resets the board every time game starts
         printf("\n\n\t------WELCOME TO TIC TAC TOE------\n\n");
         graphics();
         printf("\n\nWE WILL BE STARTING FROM 'O'\n");
         game();
         printf("\n\nDo You want To Play Again? (y/n): ");
-        fflush(stdin); //flushes out any new lines
+        fflush(stdin);      //flushes out any new lines
         //getchar();        //Use this if Play again Code Doesn't runs
     }
     while(tolower(getchar())=='y');
@@ -47,7 +50,7 @@ void game()     //Contains Main Game Logic
     while(cnt!=9){
 
         printf("\n\nPlayer ");
-        if(cnt % 2 == 0){   //Since we started from player O, Player O's trun will always be such that cnt % 2 == 0
+        if(cnt % 2 == 0){       //Since we started from player O, Player O's trun will always be such that cnt % 2 == 0
             printf("O:\n");
         }
         else{
@@ -66,7 +69,7 @@ void game()     //Contains Main Game Logic
             if(num_check(choice)==0)        //Ensures choosen Integer is not choosen before
             {
 
-                data[cnt] = choice;     //Storing the number choosen by the players
+                data[cnt] = choice;         //Storing the number choosen by the players
 
                 //Setting up row and column where the data is to be stored
                 cnt++;
@@ -83,7 +86,7 @@ void game()     //Contains Main Game Logic
                     j=4*(choice-6)-3;
                 }
                 
-                replace_box(i,j); // i represent row and j represent column
+                replace_box(i,j);       // i represent row and j represent column
             }
             else{
                 printf("\n%d has already been choosen, Choose another Number",choice);
@@ -108,7 +111,7 @@ void replace_box(int i, int j)
 
     
     char result = 'N';
-    if(cnt > 5)      //Makes Code More Efficient 
+    if(cnt > 5)         //Makes Code More Efficient 
     {
         result = win_loose_draw();
     }
@@ -212,14 +215,14 @@ int get_integer(){ // Returns the int if int was inputed else return 0
     {
         if(!isdigit(local_choice[k]))
         {
-            is_valid = 0; // if any enity except int is entered makes it invalid 
+            is_valid = 0;        // if any enity except int is entered makes it invalid 
             break; 
         }
     }
 
     int num = atoi(local_choice);       //changes str to int
 
-    if(is_valid == 1)   //Ensures Given data is an Integer
+    if(is_valid == 1)           //Ensures Given data is an Integer
     {
         return num;
     }
