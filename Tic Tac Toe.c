@@ -111,7 +111,7 @@ void replace_box(int i, int j)
 
     
     char result = 'N';
-    if(cnt > 5)         //Makes Code More Efficient 
+    if(cnt > 4)         //Makes Code More Efficient 
     {
         result = win_loose_draw();
     }
