@@ -8,6 +8,7 @@ void replace_box(int i, int j);
 char win_loose_draw();
 void board_reset();
 int num_check(int n);
+int get_integer();
 
 static char board[5][65] = {
     "   |   |                    1 | 2 | 3 ",
@@ -53,58 +54,42 @@ void game()     //Contains Main Game Logic
             printf("X:\n");
         }
 
-        printf("Enter the number: ");
-        char local_choice[30];      
-        scanf(" %[^\n]", local_choice);   //Takes a single char // space before %c to clear any new line // or we can use fflush(stdin);
-
-        int is_valid = 1;
-
-        for(int k=0 ;local_choice[k] != '\0'; k++)
+        int choice = 0;
+        while(choice == 0)      //Ensures Given data is an Integer
         {
-            if(!isdigit(local_choice[k]))
-            {
-                is_valid = 0; // if any enity except int is entered makes it invalid
-                break; 
-            }
+            printf("Enter the Integer between 1-9: ");
+            choice = get_integer();
         }
-
-
-        if(is_valid == 1)   //Ensures Given data is an Integer
+        
+        if(choice >= 1 && choice <= 9)    
         {
-            choice = atoi(local_choice);  //converts char to int
-
-            if(choice >= 1 && choice <= 9)    
+            if(num_check(choice)==0)        //Ensures choosen Integer is not choosen before
             {
-                if(num_check(choice)==0)        //Ensures choosen Integer is not choosen before
-                {
 
-                    data[cnt] = choice;     //Storing the number choosen by the players
+                data[cnt] = choice;     //Storing the number choosen by the players
 
-                    //Setting up row and column where the data is to be stored
-                    cnt++;
-                    if(choice >= 1 && choice <= 3){
-                        i=0;
-                        j=4*choice-3;
-                    }
-                    else if(choice >= 4 && choice <= 6){
-                        i=2;
-                        j=4*(choice-3)-3;
-                    }
-                    else if(choice >= 7 && choice <= 9){
-                        i=4;
-                        j=4*(choice-6)-3;
-                    }
-                    
-                    replace_box(i,j); // i represent row and j represent column
+                //Setting up row and column where the data is to be stored
+                cnt++;
+                if(choice >= 1 && choice <= 3){
+                    i=0;
+                    j=4*choice-3;
+                }
+                else if(choice >= 4 && choice <= 6){
+                    i=2;
+                    j=4*(choice-3)-3;
+                }
+                else if(choice >= 7 && choice <= 9){
+                    i=4;
+                    j=4*(choice-6)-3;
+                }
                 
-                }
-                else{
-                    printf("\n%d has already been choosen, Choose another Number",choice);
-                }
-                continue;
-            }  
+                replace_box(i,j); // i represent row and j represent column
+            }
+            else{
+                printf("\n%d has already been choosen, Choose another Number",choice);
+            }
+            continue;
         }
-            printf("\n\nChoose An Integer between 1-9 ");
     }
 }
 
@@ -121,7 +106,12 @@ void replace_box(int i, int j)
 
     graphics();
 
-    char result = win_loose_draw();
+    
+    char result = 'N';
+    if(cnt > 5)      //Makes Code More Efficient 
+    {
+        result = win_loose_draw();
+    }
 
     if(result != 'N')
     {
@@ -208,4 +198,31 @@ void board_reset() //Resets all the data stored
         data[i] = ' ' ;   //reset which number have been choosen
     }
     cnt=0;       //reset how many number have been choosen
+}
+
+
+
+int get_integer(){ // Returns the int if int was inputed else return 0
+    char local_choice[30];
+    scanf(" %30[^\n]s", local_choice);   // space before %30[^\n]s to clear any new line // or we can use fflush(stdin);
+
+    int is_valid = 1;
+
+    for(int k=0 ;local_choice[k] != '\0'; k++)
+    {
+        if(!isdigit(local_choice[k]))
+        {
+            is_valid = 0; // if any enity except int is entered makes it invalid 
+            break; 
+        }
+    }
+
+    int num = atoi(local_choice);       //changes str to int
+
+    if(is_valid == 1)   //Ensures Given data is an Integer
+    {
+        return num;
+    }
+    printf("\n\n-----Choose an Integer-----\n\n");
+    return 0;
 }
