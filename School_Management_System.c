@@ -57,7 +57,6 @@ int main(){
         }
             fscanf(fp,"%d",&Total_std);
         fclose(fp);
-
         if(Total_std != 0)
         {
             struct Students S[Total_std];
@@ -77,49 +76,30 @@ int main(){
         int choice;
         if((choice = get_integer())!=0)
         {
-            if(choice == 1){
+            int IfNoData = if_no_data();
+            if(IfNoData == 0)
+            {
+                if(choice == 1){        add_details();      }
+                else if(choice == 2){   view_stored_data(); }
+                else if(choice == 3){   edit_details();     }
+                else if(choice == 4){   delete_details();   }
+                else if(choice == 5){   find_details();     }
+                else if(choice == 6){   exit(0);            }
+                else{
+                    printf("\n\n--------Invalid Choice--------\n");
+                    continue;       //Skips the Breaking below, Hence Continuing the Loop
+                }
+            }
+            else if(IfNoData == 1)
+            {
                 add_details();
             }
-            else if(choice == 2){
-                if(if_no_data() == 0)
-                {
-                    view_stored_data();
-                }
-                else{add_details();}
-            }
-            else if(choice == 3){
-                if(if_no_data() == 0)
-                {
-                    edit_details();
-                }
-                else{add_details();}
-                
-            }
-            else if(choice == 4)
+            else if(IfNoData == 2)
             {
-                if(if_no_data() == 0)
-                {
-                    delete_details();
-                }
-                else{add_details();}
+                continue;
             }
-            else if(choice == 5)
-            {
-                if(if_no_data() == 0)
-                {
-                    find_details();
-                }
-                else{add_details();}
-            }
-            else if(choice == 6)
-            {
-                exit(0);
-            }
-            else{
-                printf("\n\n--------Invalid Choice--------\n");
-                continue;       //Skips the Breaking below, Hence Continuing the Loop
-            }
-            printf("\n\nDo You want to Continu to HOME PAGE? (y/n): ");
+            
+            printf("\n\nDo You want to Continue to HOME PAGE? (y/n): ");
             getchar();
             if(tolower(getchar())!='y')
             {
@@ -341,6 +321,11 @@ void delete_details()
 
     do
     {    
+        if(Total_std == 0)
+        {
+            printf("\n\n-----All the Students Details have been deleted-----\n\n");
+            break;
+        }
         printf("\n\n----------Stored Student Details----------\n\n");
         table_head();
         print_in_table(S,Total_std,'y');
@@ -717,6 +702,9 @@ int if_no_data()    //returns 1 if no data is present in the file else 0
         getchar();
         if(getchar() == 'y'){
             return 1;
+        }
+        else{
+            return 2;
         }
     }
     return 0;
