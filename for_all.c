@@ -55,19 +55,18 @@ unsigned long long get_unsignedlonglong() {
 
 
 int generate_number(int n) {
-	srand(time(NULL));     // Seed the random number generator
-	int number = 0;
-	// Ensure n is a positive integer
-	if (n <= 0) {
-		return -1;  // Invalid input, return error code
-	}
-	// Generate a random number with n digits
-	for (int i = 0; i < n; i++) {
-		// Generate a random digit between 1 and 9
-		int digit = rand() % 9 + 1;
-		number = number * 10 + digit;
-	}
-	return number;
+    int number = 0;
+    // Ensure n is a positive integer
+    if (n <= 0) {
+        return -1;  // Invalid input, return error code
+    }
+    // Generate a random number with n digits
+    for (int i = 0; i < n; i++) {
+        // Generate a random digit between 1 and 9
+        int digit = rand() % 9 + 1;
+        number = number * 10 + digit;
+    }
+    return number;
 }
 
 
