@@ -9,7 +9,29 @@
  * return 0 if user is entering entity other than integer      *
  * return Integer entered bu user if user is entering integer  *
  ***************************************************************/
-unsigned long long get_integer() {
+
+int get_integer(){ 
+    char local_choice[30];
+    scanf(" %29[^\n]s", local_choice);   // space before %29[^\n]s to clear any new line // or we can use fflush(stdin);
+
+    for(int k=0 ;local_choice[k] != '\0'; k++)
+    {
+        if(!isdigit(local_choice[k]))
+        {
+            printf("\n\n-----Choose an Integer-----\n\n");
+            return 0;
+        }
+    }
+    int num = atoi(local_choice);       //changes str to int
+    if(num == 0)
+    {
+        printf("\n--------Element cannot be 0--------\n");   
+        return 0;
+    }
+    return num;
+}
+
+unsigned long long get_unsignedlonglong() {
 	char local_choice[50];
 	scanf(" %49[^\n]s", local_choice);   // space before %49[^\n]s to clear any new line // or we can use fflush(stdin);
 	trimWhitespace(local_choice);
@@ -28,7 +50,6 @@ unsigned long long get_integer() {
 		printf("\n--------Element cannot be 0--------\n");
 		return 0;
 	}
-	printf("_________%llu________",num);
 	return num;
 }
 
