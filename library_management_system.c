@@ -7,7 +7,7 @@ struct Human_data{
     char type;              // u ->User   s-> Staff   this will store weather person is staff or normal user
     int id;
     char password[50];
-    long long phone_no;
+    unsigned long long phone_no;
     char name[50];
     int nbook;              //Stores the no of books borrowed
 };
@@ -36,6 +36,8 @@ void borrow_book();
 void search_book();
 void add_book();
 
+void forgot(struct Human_data H);
+
 // Global Variables
 char Time[50]; // Array to store the time as string
 int Human_cnt=0;
@@ -43,7 +45,6 @@ int Human_cnt=0;
 int main()
 {
     Human_cnt = 0;
-    int i = 0;
     
     FILE *fp = fopen("human_data.dat", "rb");
     if (fp == NULL) {
@@ -61,18 +62,30 @@ int main()
         return 1;  // Exit if the file can't be opened for reading
     }
     
-    
-
     // Dynamically allocate memory for human data
-    struct Human_data *H = malloc((Human_cnt+1) * sizeof(struct Human_data));  // Start with space for 1 records initially
-    while(fscanf(fp,"%c %d %s %lld %s %d \n",&H[i].type, &H[i].id, H[i].password, &H[i].phone_no, H[i].name, &H[i].nbook) != EOF)
+    struct Human_data *H = malloc(sizeof(struct Human_data));  // Start with space for 1 record
+    if (!H) {
+        printf("Memory allocation failed\n");
+        return 1;
+    }
+    
+    while (fscanf(fp, " %c %d %s %llu %s %d ",
+                  &H[Human_cnt].type,
+                  &H[Human_cnt].id,
+                  H[Human_cnt].password,
+                  &H[Human_cnt].phone_no,
+                  H[Human_cnt].name,
+                  &H[Human_cnt].nbook) !=EOF) // Ensure all fields are correctly read
     {
         Human_cnt++;
-        i++;
-        H = realloc(H,(Human_cnt+1) * sizeof(struct Human_data));           // Reallocate memory
+        H = realloc(H, (Human_cnt + 1) * sizeof(struct Human_data));
+        if (!H) {
+            printf("Memory reallocation failed\n");
+            free(H);
+            return 1;
+        }
+        
     }
-    // Free the dynamically allocated memory
-    free(H);
     fclose(fp);
     
     get_time(Time); // Pass the array to the function
@@ -119,25 +132,18 @@ void login_page(struct Human_data H[]){
         {
             id = get_integer();
         }
-        printf("___%d__",id);
         printf("Enter Your Password: ");
         char pass[50];
         getchar();          //removes \n 
         scanf("%[^\n]s", pass);
         
         trimWhitespace(pass);               //removes all the white space in the beginning and end (function from for_all.c)
-        printf("__%s__",pass);
+
         int i;
         for(i = 0 ; i<Human_cnt ; i++){     //Checks if entered id is present in database or not
-        printf("Type: %c\n", H[i].type);
-        printf("ID: %d\n", H[i].id);
-        printf("Password: %s\n", H[i].password);
-        printf("Phone No: %lld\n", H[i].phone_no);
-        printf("Name: %s\n", H[i].name);
-        printf("Nbook: %d\n", H[i].nbook);
             if (id == H[i].id){      
                 if (strcasecmp(pass, "forgot") == 0) {      //if id is correct and password was forgotten, will go to forgot() function
-                    //forgot(H);
+                    forgot(H[i]);
                     goto re;
                 }
                 if(strcmp(pass,H[i].password) == 0) {
@@ -151,7 +157,7 @@ void login_page(struct Human_data H[]){
             printf("FORGOT YOUR PASSWORD?? ENTER 'forgot' IN PASSWORD TO RECOVER YOUR PASSWORD");
             goto re;
         }
-        //home_page();
+        //home_page(H[i]);
 }
 
 
@@ -192,10 +198,15 @@ void signup_page(struct Human_data H[])
     trimWhitespace(temp.name);          //removes all the white space in the beginning and end (function from for_all.c)
     
     printf("Phone Number: ");
-    int phoneNo = 0;
+    unsigned long long phoneNo = 0;
     while(phoneNo == 0)         //it handel ValueError
     {
         phoneNo = get_integer();
+        if(cnt_digits(phoneNo)!=10)
+        {
+            printf("-------------Phone Number Must Contain 10 digits-------------\n\nPhone Number: ");
+            phoneNo = 0;
+        }
     }
     temp.phone_no = phoneNo;
     
@@ -218,7 +229,8 @@ void signup_page(struct Human_data H[])
         printf("Failed to open the file for appending");
         return ;  // Exit if the file can't be opened for appending
     }
-    fprintf(fp,"%c %d %s %lld %s %d \n",temp.type, temp.id, temp.password, temp.phone_no, temp.name, temp.nbook);
+    printf("_________%llu________",temp.phone_no);
+    fprintf(fp,"%c %d %s %llu %s %d \n",temp.type, temp.id, temp.password, temp.phone_no, temp.name, temp.nbook);
 
     fclose(fp);
 }
@@ -230,6 +242,28 @@ void search_book();
 void add_book();
 */
 
+
+void forgot(struct Human_data H)
+{
+    int generated_login_code = generate_number(6);
+    printf("\n\nLOGIN CODE HAS BEEN SENT TO YOU, IN PHONE NUMBER: %lld",H.phone_no);
+    printf("\n\n\nThis is How SMS in Phone Number %lld Looks like:\n",H.phone_no);
+    printf("----------------------------------------------------------------\n");
+    printf("Hello %s, Your Login Code is %d ",H.name,generated_login_code);
+    printf("\n----------------------------------------------------------------\n");
+    printf("\nEnter The Login Code: ");
+    int code;
+    scanf("%d",&code);
+    if(generated_login_code == code)
+    {
+        printf("Your password is: %s\n(Don't Forget that Again)", H.password);
+        //home_page(H);
+    }
+    else
+    {
+        printf("-----------Invalid Login Code-----------");
+    }
+}
 
 
 
