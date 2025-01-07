@@ -1,7 +1,7 @@
 #ifndef FOR_ALL_H
 #define FOR_ALL_H
 
-int get_integer();
+unsigned long long get_integer();
 int generate_number(int n);
 void trimWhitespace(char *str);
 void get_time(char *t);
