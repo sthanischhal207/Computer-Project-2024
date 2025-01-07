@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "for_all.h"
 
 struct Human_data{
@@ -30,7 +31,7 @@ struct BR_data{             //BR represents Borrow or return
 //Primary UDF
 void login_page(struct Human_data H[]);
 void signup_page(struct Human_data H[]);
-void home_page();
+void home_page(struct Human_data H);
 void return_book();
 void borrow_book();
 void search_book();
@@ -40,7 +41,9 @@ void forgot(struct Human_data H);
 
 // Global Variables
 char Time[50]; // Array to store the time as string
-int Human_cnt=0;
+int Human_cnt = 0;          //Counts number of data of humans in database
+int Book_cnt = 0;           //Counts number of data of Books in database
+int BR_cnt = 0;             //Counts number of data of Borrow or Return in database
 
 int main()
 {
@@ -69,7 +72,7 @@ int main()
         return 1;
     }
     
-    while (fscanf(fp, " %c %d %s %llu %s %d ",
+    while (fscanf(fp, " %c %d %s %llu %s %d \n",
                   &H[Human_cnt].type,
                   &H[Human_cnt].id,
                   H[Human_cnt].password,
@@ -87,14 +90,27 @@ int main()
         
     }
     fclose(fp);
+    for(int i=0 ; i<Human_cnt; i++){
+    printf(" %c %d %s %llu %s %d\n",
+                  H[i].type,
+                  H[i].id,
+                  H[i].password,
+                  H[i].phone_no,
+                  H[i].name,
+                  H[i].nbook);
+    }
+    printf("\n\n");
+    print_space(13);                //prints space UDF in for_all.c             
+    printf("KATHMANDU INTERNATIONAL LIBRARY\n");
+    print_space(19);                //prints space UDF in for_all.c 
+    printf("Jamal, Kathmandu");
+    printf("\n\tYour Gateway to Knowledge and Inspiration\n");
     
     get_time(Time); // Pass the array to the function
-    printf("\n\n-------------KATHMANDU INTERNATIONAL LIBRARY-------------\n");
-    print_space(19);
-    printf("Jamal, Kathmandu");
-    printf("\n\nDate: %.10s\n\n",Time);            //Displays Date of that day
+    printf("\n\nDate: %.10s\nTime: %s\n",Time,Time + 11);            //Displays Date and Time of that day
+    
     re:                 //return to this using goto if any mistake is done by user
-        printf("CHOOSE:\n1) Login\n2) Sign Up\n3) Exit\n");
+        printf("Please select an option to proceed:\n1) Login\n2) Sign Up\n3) Exit\n\nYour Choice:");
         int choice = 0;
         while(choice == 0 )        //This Handles ValueError
         {
@@ -120,12 +136,21 @@ int main()
             printf("\n--------CHOOSE AMONG 1, 2, 3--------\n\n");
             goto re;
         }
-    
+    for(int i=0 ; i<Human_cnt; i++){
+    printf(" %c %d %s %llu %s %d\n",
+                  H[i].type,
+                  H[i].id,
+                  H[i].password,
+                  H[i].phone_no,
+                  H[i].name,
+                  H[i].nbook);
+    }
     return 0;
 }
 
 void login_page(struct Human_data H[]){
     re:
+        H[1].id = 123;
         printf("\n\nEnter Your ID: ");
         int id = 0;
         while(id == 0 )        //This Handles ValueError
@@ -157,22 +182,19 @@ void login_page(struct Human_data H[]){
             printf("FORGOT YOUR PASSWORD?? ENTER 'forgot' IN PASSWORD TO RECOVER YOUR PASSWORD");
             goto re;
         }
-        //home_page(H[i]);
+        home_page(H[i]);
 }
 
 
 void signup_page(struct Human_data H[])
 {
-    FILE *fp = fopen("human_data.dat", "ab");
-    if (fp == NULL) {
-        fp = fopen("human_data.dat", "wb");  // Creates the file if not present
-        if (fp == NULL) {
-            printf("Failed to open or create the file");
-            return;
-        }
-        fclose(fp);  // Close after creating the file
+    Human_cnt++;
+    H = realloc(H, (Human_cnt + 1) * sizeof(struct Human_data));
+    if (!H) {
+        printf("Memory reallocation failed\n");
+        free(H);
+        return;
     }
-    
     int generated_id = generate_number(5);          //Generates 5 digit number between 1-9 (function from for_all.c)
     int i;
     check_again:
@@ -183,34 +205,34 @@ void signup_page(struct Human_data H[])
                 goto check_again;                   // Ensures that generated id is not present
             }
         }
-    struct Human_data temp;
-    temp.id = generated_id;
+    H[Human_cnt].id = generated_id;
     printf("\n\nSystem Generated Your Id as %d\n(Please kindly remember it carefully)",generated_id);
     
     printf("\nSet Your Password: ");
     getchar();          //fflush(stdin);
-    scanf("%[^\n]s", temp.password);
-    trimWhitespace(temp.password);          //removes all the white space in the beginning and end (function from for_all.c)
+    scanf("%[^\n]s", H[Human_cnt].password);
+    trimWhitespace(H[Human_cnt].password);          //removes all the white space in the beginning and end (function from for_all.c)
     
     printf("Enter Your Name: ");
     getchar();
-    scanf("%[^\n]s", temp.name);
-    trimWhitespace(temp.name);          //removes all the white space in the beginning and end (function from for_all.c)
+    scanf("%[^\n]s", H[Human_cnt].name);
+    trimWhitespace(H[Human_cnt].name);          //removes all the white space in the beginning and end (function from for_all.c)
     
     printf("Phone Number: ");
     unsigned long long phoneNo = 0;
     while(phoneNo == 0)         //it handel ValueError
     {
-        phoneNo = get_integer();
-        if(cnt_digits(phoneNo)!=10)
+        phoneNo = get_unsignedlonglong();
+        int check =phoneNo/pow(10,9);
+        if( check != 9)
         {
-            printf("-------------Phone Number Must Contain 10 digits-------------\n\nPhone Number: ");
+            printf("-------------Phone Number Must Contain 10 digits and Start with 9-------------\n\nPhone Number: ");
             phoneNo = 0;
         }
     }
-    temp.phone_no = phoneNo;
+    H[Human_cnt].phone_no = phoneNo;
     
-    temp.nbook = 0;
+    H[Human_cnt].nbook = 0;
     
     char decision;
     printf("Are You Sure You want to Sign Up (y/n): ");
@@ -218,28 +240,163 @@ void signup_page(struct Human_data H[])
     scanf("%c", &decision);
     fflush(stdin);
     
-    if(decision == 'y'){ temp.type = 'u'; }
-    else if(decision == 's'){ temp.type = 's'; }
+    if(decision == 'y'){ H[Human_cnt].type = 'u'; }
+    else if(decision == 's'){ H[Human_cnt].type = 's'; }
     else{return; }
     
     
     //open the file for appending 
-    fp = fopen("human_data.dat", "ab");
+    FILE *fp = fopen("human_data.dat", "ab");
     if (fp == NULL) {
         printf("Failed to open the file for appending");
         return ;  // Exit if the file can't be opened for appending
     }
-    printf("_________%llu________",temp.phone_no);
-    fprintf(fp,"%c %d %s %llu %s %d \n",temp.type, temp.id, temp.password, temp.phone_no, temp.name, temp.nbook);
-
+    fprintf(fp,"%c %d %s %llu %s %d \n",H[Human_cnt].type, H[Human_cnt].id, H[Human_cnt].password, H[Human_cnt].phone_no, H[Human_cnt].name, H[Human_cnt].nbook);
+    printf("\n\nYour Data has been Sucessfully Added to the System Database.\nThank You For Choosing Us\n");
     fclose(fp);
 }
-/*
-void home_page();
-void return_book();
+
+
+void home_page(struct Human_data H)
+{
+    //Reading of book_data.dat
+    FILE *fp = fopen("book_data.dat", "rb");
+    if (fp == NULL) {
+        fp = fopen("book_data.dat", "wb");  // Creates the file if not present
+        if (fp == NULL) {
+            printf("Failed to open or create the file");
+            return;  // Exit if file creation fails
+        }
+        fclose(fp);  // Close after creating the file
+    }
+    // Reopen the file for reading after creation
+    fp = fopen("book_data.dat", "rb");
+    if (fp == NULL) {
+        printf("Failed to open the file for reading");
+        return;  // Exit if the file can't be opened for reading
+    }
+    
+    // Dynamically allocate memory for human data
+    struct Book_data *B = malloc(sizeof(struct Book_data));  // Start with space for 1 record
+    if (!B) {
+        printf("Memory allocation failed\n");
+        return ;
+    }
+    Book_cnt = 0;
+    while (fscanf(fp, " %d  %s %s %c \n",
+                  &B[Book_cnt].book_id,
+                  B[Book_cnt].author,
+                  B[Book_cnt].name,
+                  &B[Book_cnt].status) !=EOF) // Ensure all fields are correctly read
+    {
+        Book_cnt++;
+        B = realloc(B, (Book_cnt + 1) * sizeof(struct Book_data));
+        if (!B) {
+            printf("Memory reallocation failed\n");
+            free(B);
+            return ;
+        }
+        
+    }
+    fclose(fp);
+    
+    
+    //=================================================================================================================
+    
+    //Reading of BR_data.dat
+    fp = fopen("BR_data.dat", "rb");
+    if (fp == NULL) {
+        fp = fopen("BR_data.dat", "wb");  // Creates the file if not present
+        if (fp == NULL) {
+            printf("Failed to open or create the file");
+            return;  // Exit if file creation fails
+        }
+        fclose(fp);  // Close after creating the file
+    }
+    // Reopen the file for reading after creation
+    fp = fopen("BR_data.dat", "rb");
+    if (fp == NULL) {
+        printf("Failed to open the file for reading");
+        return;  // Exit if the file can't be opened for reading
+    }
+    
+    // Dynamically allocate memory for human data
+    struct BR_data *BR = malloc(sizeof(struct BR_data));  // Start with space for 1 record
+    if (!BR) {
+        printf("Memory allocation failed\n");
+        return ;
+    }
+    BR_cnt = 0;
+    while (fscanf(fp, " %d  %d %s %s \n",
+                  &BR[BR_cnt].book_id,
+                  &BR[BR_cnt].id,
+                  BR[BR_cnt].B_T,
+                  BR[BR_cnt].R_T) !=EOF) // Ensure all fields are correctly read
+    {
+        BR_cnt++;
+        BR = realloc(BR, (BR_cnt + 1) * sizeof(struct BR_data));
+        if (!BR) {
+            printf("Memory reallocation failed\n");
+            free(BR);
+            return ;
+        }
+        
+    }
+    fclose(fp);
+    
+    
+    //=================================================================================================================
+
+
+    //The Following Codes are for Graphics
+    printf("\n\n\t\tWELCOME TO KATHMANDU INTERNATIONAL LIBRARY\n\t\tYour Gateway to Knowledge and Inspiration\n\n\n");
+    printf("Hello %s, We are dedicated to providing you with a seamless library experience.",H.name);
+    
+    get_time(Time); // Pass the array to the function
+    printf("\n\nDate: %.10s\nTime: %s\n",Time,Time + 11);            //Displays Date and Time of that day
+    
+    if(Book_cnt == 0 && H.type == 'u'){         //If No Book are available IN CASE OF USER
+        printf("\n\nSorry, no books are currently available.\n");
+        printf("Our staff needs to add book records to the system first.\n");
+        printf("Please check back later. Thank you for your understanding!\n");
+        exit(0);            
+    }
+    if(Book_cnt == 0 && H.type == 's'){         //If No Book are available IN CASE OF STAFF
+        printf("\n\nNo books are currently available.\nGoing to Add Book Feature............\n\n");
+        //add_book(B);
+        return;
+    }
+    
+    re:
+        printf("\n\nPlease select an option to proceed:\n1) Return a Book\n2) Borrow a Book\n3) Search for a Book\n");
+        //The Below code Displays Different UI For User and a Staff
+        H.type == 'u' ? printf("4)Log Out\n\nYour Choice: ") : printf("4)Add a Book\n5)Log Out\n\nYour Choice: ");
+        int choice = 0;
+        while(choice == 0)
+        {
+            choice = get_integer();
+        }
+        if(choice == 1){//return_book(H,B,BR);
+        }
+        else if(choice == 2){//borrow_book(H,B,BR);
+        }
+        else if(choice == 3){//search_book(B);
+        }
+        else if(choice == 4 && H.type == 'u'){main();}                  //User has LogOut in option 4
+        else if(choice == 4 && H.type == 's'){//add_book(B);
+        }           //Staff has Add a Book in option 4
+        else if(choice == 5 && H.type == 's'){main();}                  //Staff has LogOut in option 5
+        else{goto re;}
+}
+
+
+void add_book(struct Book_data B[]){
+    
+}
+
+/*void return_book();
 void borrow_book();
 void search_book();
-void add_book();
 */
 
 
