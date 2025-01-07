@@ -4,30 +4,30 @@
 #include <math.h>
 #include "for_all.h"
 
-struct Human_data{
-    char type;              // u ->User   s-> Staff   this will store weather person is staff or normal user
-    int id;
-    char password[50];
-    unsigned long long phone_no;
-    char name[50];
-    int nbook;              //Stores the no of books borrowed
+struct Human_data {
+	char type;              // u ->User   s-> Staff   this will store weather person is staff or normal user
+	int id;
+	char password[50];
+	unsigned long long phone_no;
+	char name[50];
+	int nbook;              //Stores the no of books borrowed
 };
 
-struct Book_data{
-    int book_id;
-    char author[100];
-    char name[100];
-    char status;            //It Stores weather Book is available or not
+struct Book_data {
+	int book_id;
+	char author[100];
+	char name[100];
+	char status;            //It Stores weather Book is available or not
 };
 
-struct BR_data{             //BR represents Borrow or return
-    int book_id;
-    int id;                 //Human id
-    char B_T[50];           //Borrow Time
-    char R_T[50];           //Return Time
+struct BR_data {            //BR represents Borrow or return
+	int book_id;
+	int id;                 //Human id
+	char B_T[50];           //Borrow Time
+	char R_T[50];           //Return Time
 };
 
-//UDF 
+//UDF
 //Primary UDF
 void login_page(struct Human_data H[]);
 void signup_page(struct Human_data H[]);
@@ -35,7 +35,7 @@ void home_page(struct Human_data H);
 void return_book();
 void borrow_book();
 void search_book();
-void add_book();
+void add_book(struct Book_data B[]);
 
 void forgot(struct Human_data H);
 
@@ -47,351 +47,406 @@ int BR_cnt = 0;             //Counts number of data of Borrow or Return in datab
 
 int main()
 {
-    Human_cnt = 0;
-    
-    FILE *fp = fopen("human_data.dat", "rb");
-    if (fp == NULL) {
-        fp = fopen("human_data.dat", "wb");  // Creates the file if not present
-        if (fp == NULL) {
-            printf("Failed to open or create the file");
-            return 1;  // Exit if file creation fails
-        }
-        fclose(fp);  // Close after creating the file
-    }
-    // Reopen the file for reading after creation
-    fp = fopen("human_data.dat", "rb");
-    if (fp == NULL) {
-        printf("Failed to open the file for reading");
-        return 1;  // Exit if the file can't be opened for reading
-    }
-    
-    // Dynamically allocate memory for human data
-    struct Human_data *H = malloc(sizeof(struct Human_data));  // Start with space for 1 record
-    if (!H) {
-        printf("Memory allocation failed\n");
-        return 1;
-    }
-    
-    while (fscanf(fp, " %c %d %s %llu %s %d \n",
-                  &H[Human_cnt].type,
-                  &H[Human_cnt].id,
-                  H[Human_cnt].password,
-                  &H[Human_cnt].phone_no,
-                  H[Human_cnt].name,
-                  &H[Human_cnt].nbook) !=EOF) // Ensure all fields are correctly read
-    {
-        Human_cnt++;
-        H = realloc(H, (Human_cnt + 1) * sizeof(struct Human_data));
-        if (!H) {
-            printf("Memory reallocation failed\n");
-            free(H);
-            return 1;
-        }
-        
-    }
-    fclose(fp);
-    for(int i=0 ; i<Human_cnt; i++){
-    printf(" %c %d %s %llu %s %d\n",
-                  H[i].type,
-                  H[i].id,
-                  H[i].password,
-                  H[i].phone_no,
-                  H[i].name,
-                  H[i].nbook);
-    }
-    printf("\n\n");
-    print_space(13);                //prints space UDF in for_all.c             
-    printf("KATHMANDU INTERNATIONAL LIBRARY\n");
-    print_space(19);                //prints space UDF in for_all.c 
-    printf("Jamal, Kathmandu");
-    printf("\n\tYour Gateway to Knowledge and Inspiration\n");
-    
-    get_time(Time); // Pass the array to the function
-    printf("\n\nDate: %.10s\nTime: %s\n",Time,Time + 11);            //Displays Date and Time of that day
-    
-    re:                 //return to this using goto if any mistake is done by user
-        printf("Please select an option to proceed:\n1) Login\n2) Sign Up\n3) Exit\n\nYour Choice:");
-        int choice = 0;
-        while(choice == 0 )        //This Handles ValueError
-        {
-            choice = get_integer();
-        }
-        
-        if(choice == 1){
-            if(Human_cnt != 0){
-                login_page(H);
-            }
-            else{           //if no data is present this is executed
-                printf("\n--------NO DATA ARE STORED IN DATABASE, SIGN UP FIRST--------\n\n");
-                goto re;
-            }
-        }
-        else if(choice == 2){
-            signup_page(H);
-        }
-        else if(choice == 3){
-            exit(0);
-        }
-        else{
-            printf("\n--------CHOOSE AMONG 1, 2, 3--------\n\n");
-            goto re;
-        }
-    for(int i=0 ; i<Human_cnt; i++){
-    printf(" %c %d %s %llu %s %d\n",
-                  H[i].type,
-                  H[i].id,
-                  H[i].password,
-                  H[i].phone_no,
-                  H[i].name,
-                  H[i].nbook);
-    }
-    return 0;
+	Human_cnt = 0;
+
+	FILE *fp = fopen("human_data.dat", "rb");
+	if (fp == NULL) {
+		fp = fopen("human_data.dat", "wb");  // Creates the file if not present
+		if (fp == NULL) {
+			printf("Failed to open or create the file");
+			return 1;  // Exit if file creation fails
+		}
+		fclose(fp);  // Close after creating the file
+	}
+	// Reopen the file for reading after creation
+	fp = fopen("human_data.dat", "rb");
+	if (fp == NULL) {
+		printf("Failed to open the file for reading");
+		return 1;  // Exit if the file can't be opened for reading
+	}
+
+	// Dynamically allocate memory for human data
+	struct Human_data *H = malloc(sizeof(struct Human_data));  // Start with space for 1 record
+	if (!H) {
+		printf("Memory allocation failed\n");
+		return 1;
+	}
+
+	while (fscanf(fp, " %c %d %s %llu %s %d \n",
+	              &H[Human_cnt].type,
+	              &H[Human_cnt].id,
+	              H[Human_cnt].password,
+	              &H[Human_cnt].phone_no,
+	              H[Human_cnt].name,
+	              &H[Human_cnt].nbook) !=EOF) // Ensure all fields are correctly read
+	{
+		Human_cnt++;
+		H = realloc(H, (Human_cnt + 1) * sizeof(struct Human_data));
+		if (!H) {
+			printf("Memory reallocation failed\n");
+			free(H);
+			return 1;
+		}
+
+	}
+	fclose(fp);
+	for(int i=0 ; i<Human_cnt; i++) {
+		printf(" %c %d %s %llu %s %d\n",
+		       H[i].type,
+		       H[i].id,
+		       H[i].password,
+		       H[i].phone_no,
+		       H[i].name,
+		       H[i].nbook);
+	}
+	printf("\n\n");
+	print_space(13);                //prints space UDF in for_all.c
+	printf("KATHMANDU INTERNATIONAL LIBRARY\n");
+	print_space(19);                //prints space UDF in for_all.c
+	printf("Jamal, Kathmandu");
+	printf("\n\tYour Gateway to Knowledge and Inspiration\n");
+
+	get_time(Time); // Pass the array to the function
+	printf("\n\nDate: %.10s\nTime: %s\n",Time,Time + 11);            //Displays Date and Time of that day
+
+re:                 //return to this using goto if any mistake is done by user
+	printf("Please select an option to proceed:\n1) Login\n2) Sign Up\n3) Exit\n\nYour Choice:");
+	int choice = 0;
+	while(choice == 0 )        //This Handles ValueError
+	{
+		choice = get_integer();
+	}
+
+	if(choice == 1) {
+		if(Human_cnt != 0) {
+			login_page(H);
+		}
+		else {          //if no data is present this is executed
+			printf("\n--------NO DATA ARE STORED IN DATABASE, SIGN UP FIRST--------\n\n");
+			goto re;
+		}
+	}
+	else if(choice == 2) {
+		signup_page(H);
+	}
+	else if(choice == 3) {
+		exit(0);
+	}
+	else {
+		printf("\n--------CHOOSE AMONG 1, 2, 3--------\n\n");
+		goto re;
+	}
+	for(int i=0 ; i<Human_cnt; i++) {
+		printf(" %c %d %s %llu %s %d\n",
+		       H[i].type,
+		       H[i].id,
+		       H[i].password,
+		       H[i].phone_no,
+		       H[i].name,
+		       H[i].nbook);
+	}
+	return 0;
 }
 
-void login_page(struct Human_data H[]){
-    re:
-        H[1].id = 123;
-        printf("\n\nEnter Your ID: ");
-        int id = 0;
-        while(id == 0 )        //This Handles ValueError
-        {
-            id = get_integer();
-        }
-        printf("Enter Your Password: ");
-        char pass[50];
-        getchar();          //removes \n 
-        scanf("%[^\n]s", pass);
-        
-        trimWhitespace(pass);               //removes all the white space in the beginning and end (function from for_all.c)
+void login_page(struct Human_data H[]) {
+re:
+	H[1].id = 123;
+	printf("\n\nEnter Your ID: ");
+	int id = 0;
+	while(id == 0 )        //This Handles ValueError
+	{
+		id = get_integer();
+	}
+	printf("Enter Your Password: ");
+	char pass[50];
+	getchar();          //removes \n
+	scanf("%[^\n]s", pass);
 
-        int i;
-        for(i = 0 ; i<Human_cnt ; i++){     //Checks if entered id is present in database or not
-            if (id == H[i].id){      
-                if (strcasecmp(pass, "forgot") == 0) {      //if id is correct and password was forgotten, will go to forgot() function
-                    forgot(H[i]);
-                    goto re;
-                }
-                if(strcmp(pass,H[i].password) == 0) {
-                    break;
-                }
-            }
-        }
-        if(i == Human_cnt)          //if data is not avilable in database user is asked to re-enter the id
-        {
-            printf("\n\n------Invalid ID OR PASSWORD------\n\n");
-            printf("FORGOT YOUR PASSWORD?? ENTER 'forgot' IN PASSWORD TO RECOVER YOUR PASSWORD");
-            goto re;
-        }
-        home_page(H[i]);
+	trimWhitespace(pass);               //removes all the white space in the beginning and end (function from for_all.c)
+
+	int i;
+	for(i = 0 ; i<Human_cnt ; i++) {    //Checks if entered id is present in database or not
+		if (id == H[i].id) {
+			if (strcasecmp(pass, "forgot") == 0) {      //if id is correct and password was forgotten, will go to forgot() function
+				forgot(H[i]);
+				goto re;
+			}
+			if(strcmp(pass,H[i].password) == 0) {
+				break;
+			}
+		}
+	}
+	if(i == Human_cnt)          //if data is not avilable in database user is asked to re-enter the id
+	{
+		printf("\n\n------Invalid ID OR PASSWORD------\n\n");
+		printf("FORGOT YOUR PASSWORD?? ENTER 'forgot' IN PASSWORD TO RECOVER YOUR PASSWORD");
+		goto re;
+	}
+	home_page(H[i]);
 }
 
 
 void signup_page(struct Human_data H[])
 {
-    Human_cnt++;
-    H = realloc(H, (Human_cnt + 1) * sizeof(struct Human_data));
-    if (!H) {
-        printf("Memory reallocation failed\n");
-        free(H);
-        return;
-    }
-    int generated_id = generate_number(5);          //Generates 5 digit number between 1-9 (function from for_all.c)
-    int i;
-    check_again:
-        for(i=0 ; i<Human_cnt ; i++)
-        {
-            if(H[i].id == generated_id){         // Generated Id is already present, then generated new id again 
-                generated_id = generate_number(5);
-                goto check_again;                   // Ensures that generated id is not present
-            }
-        }
-    H[Human_cnt].id = generated_id;
-    printf("\n\nSystem Generated Your Id as %d\n(Please kindly remember it carefully)",generated_id);
-    
-    printf("\nSet Your Password: ");
-    getchar();          //fflush(stdin);
-    scanf("%[^\n]s", H[Human_cnt].password);
-    trimWhitespace(H[Human_cnt].password);          //removes all the white space in the beginning and end (function from for_all.c)
-    
-    printf("Enter Your Name: ");
-    getchar();
-    scanf("%[^\n]s", H[Human_cnt].name);
-    trimWhitespace(H[Human_cnt].name);          //removes all the white space in the beginning and end (function from for_all.c)
-    
-    printf("Phone Number: ");
-    unsigned long long phoneNo = 0;
-    while(phoneNo == 0)         //it handel ValueError
-    {
-        phoneNo = get_unsignedlonglong();
-        int check =phoneNo/pow(10,9);
-        if( check != 9)
-        {
-            printf("-------------Phone Number Must Contain 10 digits and Start with 9-------------\n\nPhone Number: ");
-            phoneNo = 0;
-        }
-    }
-    H[Human_cnt].phone_no = phoneNo;
-    
-    H[Human_cnt].nbook = 0;
-    
-    char decision;
-    printf("Are You Sure You want to Sign Up (y/n): ");
-    getchar();
-    scanf("%c", &decision);
-    fflush(stdin);
-    
-    if(decision == 'y'){ H[Human_cnt].type = 'u'; }
-    else if(decision == 's'){ H[Human_cnt].type = 's'; }
-    else{return; }
-    
-    
-    //open the file for appending 
-    FILE *fp = fopen("human_data.dat", "ab");
-    if (fp == NULL) {
-        printf("Failed to open the file for appending");
-        return ;  // Exit if the file can't be opened for appending
-    }
-    fprintf(fp,"%c %d %s %llu %s %d \n",H[Human_cnt].type, H[Human_cnt].id, H[Human_cnt].password, H[Human_cnt].phone_no, H[Human_cnt].name, H[Human_cnt].nbook);
-    printf("\n\nYour Data has been Sucessfully Added to the System Database.\nThank You For Choosing Us\n");
-    fclose(fp);
+	Human_cnt++;
+	struct Human_data Temp;
+	int generated_id = generate_number(5);          //Generates 5 digit number between 1-9 (function from for_all.c)
+	int i;
+check_again:
+	for(i=0 ; i<Human_cnt ; i++)
+	{
+		if(H[i].id == generated_id) {        // Generated Id is already present, then generated new id again
+			generated_id = generate_number(5);
+			goto check_again;                   // Ensures that generated id is not present
+		}
+	}
+	Temp.id = generated_id;
+	printf("\n\nSystem Generated Your Id as %d\n(Please kindly remember it carefully)",generated_id);
+
+	printf("\nSet Your Password: ");
+	getchar();          //fflush(stdin);
+	scanf("%[^\n]s", Temp.password);
+	trimWhitespace(Temp.password);          //removes all the white space in the beginning and end (function from for_all.c)
+
+	printf("Enter Your Name: ");
+	getchar();
+	scanf("%[^\n]s", Temp.name);
+	trimWhitespace(Temp.name);          //removes all the white space in the beginning and end (function from for_all.c)
+
+	printf("Phone Number: ");
+	unsigned long long phoneNo = 0;
+	while(phoneNo == 0)         //it handel ValueError
+	{
+		phoneNo = get_unsignedlonglong();
+		int check =phoneNo/pow(10,9);
+		if( check != 9)
+		{
+			printf("-------------Phone Number Must Contain 10 digits and Start with 9-------------\n\nPhone Number: ");
+			phoneNo = 0;
+		}
+	}
+	Temp.phone_no = phoneNo;
+
+	Temp.nbook = 0;
+
+	char decision;
+	printf("Are You Sure You want to Sign Up (y/n): ");
+	getchar();
+	scanf("%c", &decision);
+	fflush(stdin);
+
+	if(decision == 'y') {
+		Temp.type = 'u';
+	}
+	else if(decision == 's') {
+		Temp.type = 's';
+	}
+	else {
+		return;
+	}
+
+
+	//open the file for appending
+	FILE *fp = fopen("human_data.dat", "ab");
+	if (fp == NULL) {
+		printf("Failed to open the file for appending");
+		return ;  // Exit if the file can't be opened for appending
+	}
+	fprintf(fp,"%c %d %s %llu %s %d \n",Temp.type, Temp.id, Temp.password, Temp.phone_no, Temp.name, Temp.nbook);
+	printf("\n\nYour Data has been Sucessfully Added to the System Database.\nThank You For Choosing Us\n");
+	fclose(fp);
+	main();
 }
+
 
 
 void home_page(struct Human_data H)
 {
-    //Reading of book_data.dat
-    FILE *fp = fopen("book_data.dat", "rb");
-    if (fp == NULL) {
-        fp = fopen("book_data.dat", "wb");  // Creates the file if not present
-        if (fp == NULL) {
-            printf("Failed to open or create the file");
-            return;  // Exit if file creation fails
-        }
-        fclose(fp);  // Close after creating the file
-    }
-    // Reopen the file for reading after creation
-    fp = fopen("book_data.dat", "rb");
-    if (fp == NULL) {
-        printf("Failed to open the file for reading");
-        return;  // Exit if the file can't be opened for reading
-    }
-    
-    // Dynamically allocate memory for human data
-    struct Book_data *B = malloc(sizeof(struct Book_data));  // Start with space for 1 record
-    if (!B) {
-        printf("Memory allocation failed\n");
-        return ;
-    }
-    Book_cnt = 0;
-    while (fscanf(fp, " %d  %s %s %c \n",
-                  &B[Book_cnt].book_id,
-                  B[Book_cnt].author,
-                  B[Book_cnt].name,
-                  &B[Book_cnt].status) !=EOF) // Ensure all fields are correctly read
-    {
-        Book_cnt++;
-        B = realloc(B, (Book_cnt + 1) * sizeof(struct Book_data));
-        if (!B) {
-            printf("Memory reallocation failed\n");
-            free(B);
-            return ;
-        }
-        
-    }
-    fclose(fp);
-    
-    
-    //=================================================================================================================
-    
-    //Reading of BR_data.dat
-    fp = fopen("BR_data.dat", "rb");
-    if (fp == NULL) {
-        fp = fopen("BR_data.dat", "wb");  // Creates the file if not present
-        if (fp == NULL) {
-            printf("Failed to open or create the file");
-            return;  // Exit if file creation fails
-        }
-        fclose(fp);  // Close after creating the file
-    }
-    // Reopen the file for reading after creation
-    fp = fopen("BR_data.dat", "rb");
-    if (fp == NULL) {
-        printf("Failed to open the file for reading");
-        return;  // Exit if the file can't be opened for reading
-    }
-    
-    // Dynamically allocate memory for human data
-    struct BR_data *BR = malloc(sizeof(struct BR_data));  // Start with space for 1 record
-    if (!BR) {
-        printf("Memory allocation failed\n");
-        return ;
-    }
-    BR_cnt = 0;
-    while (fscanf(fp, " %d  %d %s %s \n",
-                  &BR[BR_cnt].book_id,
-                  &BR[BR_cnt].id,
-                  BR[BR_cnt].B_T,
-                  BR[BR_cnt].R_T) !=EOF) // Ensure all fields are correctly read
-    {
-        BR_cnt++;
-        BR = realloc(BR, (BR_cnt + 1) * sizeof(struct BR_data));
-        if (!BR) {
-            printf("Memory reallocation failed\n");
-            free(BR);
-            return ;
-        }
-        
-    }
-    fclose(fp);
-    
-    
-    //=================================================================================================================
+read_file_again:
+	//Reading of book_data.dat
+	FILE *fp = fopen("book_data.dat", "rb");
+	if (fp == NULL) {
+		fp = fopen("book_data.dat", "wb");  // Creates the file if not present
+		if (fp == NULL) {
+			printf("Failed to open or create the file");
+			return;  // Exit if file creation fails
+		}
+		fclose(fp);  // Close after creating the file
+	}
+	// Reopen the file for reading after creation
+	fp = fopen("book_data.dat", "rb");
+	if (fp == NULL) {
+		printf("Failed to open the file for reading");
+		return;  // Exit if the file can't be opened for reading
+	}
+
+	// Dynamically allocate memory for human data
+	struct Book_data *B = malloc(sizeof(struct Book_data));  // Start with space for 1 record
+	if (!B) {
+		printf("Memory allocation failed\n");
+		return ;
+	}
+	Book_cnt = 0;
+	while (fscanf(fp, " %d  %s %s %c \n",
+	              &B[Book_cnt].book_id,
+	              B[Book_cnt].author,
+	              B[Book_cnt].name,
+	              &B[Book_cnt].status) !=EOF) // Ensure all fields are correctly read
+	{
+		Book_cnt++;
+		B = realloc(B, (Book_cnt + 1) * sizeof(struct Book_data));
+		if (!B) {
+			printf("Memory reallocation failed\n");
+			free(B);
+			return ;
+		}
+
+	}
+	fclose(fp);
 
 
-    //The Following Codes are for Graphics
-    printf("\n\n\t\tWELCOME TO KATHMANDU INTERNATIONAL LIBRARY\n\t\tYour Gateway to Knowledge and Inspiration\n\n\n");
-    printf("Hello %s, We are dedicated to providing you with a seamless library experience.",H.name);
-    
-    get_time(Time); // Pass the array to the function
-    printf("\n\nDate: %.10s\nTime: %s\n",Time,Time + 11);            //Displays Date and Time of that day
-    
-    if(Book_cnt == 0 && H.type == 'u'){         //If No Book are available IN CASE OF USER
-        printf("\n\nSorry, no books are currently available.\n");
-        printf("Our staff needs to add book records to the system first.\n");
-        printf("Please check back later. Thank you for your understanding!\n");
-        exit(0);            
-    }
-    if(Book_cnt == 0 && H.type == 's'){         //If No Book are available IN CASE OF STAFF
-        printf("\n\nNo books are currently available.\nGoing to Add Book Feature............\n\n");
-        //add_book(B);
-        return;
-    }
-    
-    re:
-        printf("\n\nPlease select an option to proceed:\n1) Return a Book\n2) Borrow a Book\n3) Search for a Book\n");
-        //The Below code Displays Different UI For User and a Staff
-        H.type == 'u' ? printf("4)Log Out\n\nYour Choice: ") : printf("4)Add a Book\n5)Log Out\n\nYour Choice: ");
-        int choice = 0;
-        while(choice == 0)
-        {
-            choice = get_integer();
-        }
-        if(choice == 1){//return_book(H,B,BR);
-        }
-        else if(choice == 2){//borrow_book(H,B,BR);
-        }
-        else if(choice == 3){//search_book(B);
-        }
-        else if(choice == 4 && H.type == 'u'){main();}                  //User has LogOut in option 4
-        else if(choice == 4 && H.type == 's'){//add_book(B);
-        }           //Staff has Add a Book in option 4
-        else if(choice == 5 && H.type == 's'){main();}                  //Staff has LogOut in option 5
-        else{goto re;}
+	//=================================================================================================================
+
+	//Reading of BR_data.dat
+	fp = fopen("BR_data.dat", "rb");
+	if (fp == NULL) {
+		fp = fopen("BR_data.dat", "wb");  // Creates the file if not present
+		if (fp == NULL) {
+			printf("Failed to open or create the file");
+			return;  // Exit if file creation fails
+		}
+		fclose(fp);  // Close after creating the file
+	}
+	// Reopen the file for reading after creation
+	fp = fopen("BR_data.dat", "rb");
+	if (fp == NULL) {
+		printf("Failed to open the file for reading");
+		return;  // Exit if the file can't be opened for reading
+	}
+
+	// Dynamically allocate memory for human data
+	struct BR_data *BR = malloc(sizeof(struct BR_data));  // Start with space for 1 record
+	if (!BR) {
+		printf("Memory allocation failed\n");
+		return ;
+	}
+	BR_cnt = 0;
+	while (fscanf(fp, " %d %d %s %s \n",
+	              &BR[BR_cnt].book_id,
+	              &BR[BR_cnt].id,
+	              BR[BR_cnt].B_T,
+	              BR[BR_cnt].R_T) !=EOF) // Ensure all fields are correctly read
+	{
+		BR_cnt++;
+		BR = realloc(BR, (BR_cnt + 1) * sizeof(struct BR_data));
+		if (!BR) {
+			printf("Memory reallocation failed\n");
+			free(BR);
+			return ;
+		}
+
+	}
+	fclose(fp);
+
+
+	//=================================================================================================================
+
+
+	//The Following Codes are for Graphics
+	printf("\n\n\t\tWELCOME TO KATHMANDU INTERNATIONAL LIBRARY\n\t\tYour Gateway to Knowledge and Inspiration\n\n\n");
+	printf("Hello %s, We are dedicated to providing you with a seamless library experience.",H.name);
+
+	get_time(Time); // Pass the array to the function
+	printf("\n\nDate: %.10s\nTime: %s\n",Time,Time + 11);            //Displays Date and Time of that day
+
+	if(Book_cnt == 0 && H.type == 'u') {        //If No Book are available IN CASE OF USER
+		printf("\n\nSorry, no books are currently available.\n");
+		printf("Our staff needs to add book records to the system first.\n");
+		printf("Please check back later. Thank you for your understanding!\n");
+		exit(0);
+	}
+	if(Book_cnt == 0 && H.type == 's') {        //If No Book are available IN CASE OF STAFF
+		printf("\n\nNo books are currently available.\nGoing to Add Book Feature............\n\n");
+		add_book(B);
+		return;
+	}
+
+re:
+	printf("\n\nPlease select an option to proceed:\n1) Return a Book\n2) Borrow a Book\n3) Search for a Book\n");
+	//The Below code Displays Different UI For User and a Staff
+	H.type == 'u' ? printf("4)Log Out\n\nYour Choice: ") : printf("4)Add a Book\n5)Log Out\n\nYour Choice: ");
+	int choice = 0;
+	while(choice == 0)
+	{
+		choice = get_integer();
+	}
+	if(choice == 1) { //return_book(H,B,BR);
+		goto read_file_again;
+	}
+	else if(choice == 2) { //borrow_book(H,B,BR);
+		goto read_file_again;
+	}
+	else if(choice == 3) { //search_book(B);
+	}
+	else if(choice == 4 && H.type == 'u') {
+		main();   //User has LogOut in option 4
+	}
+	else if(choice == 4 && H.type == 's') {
+		add_book(B);
+		goto read_file_again;
+	}             //Staff has Add a Book in option 4
+	else if(choice == 5 && H.type == 's') {
+		main();   //Staff has LogOut in option 5
+	}
+	else {
+		printf("\n-----------%d is Invalid Input-----------",choice);
+		goto re;
+
+	}
 }
 
 
-void add_book(struct Book_data B[]){
-    
+void add_book(struct Book_data B[]) {
+	FILE *fp = fopen("book_data.dat","ab");
+	struct Book_data temp;
+	printf("Enter The Following Data of The Added Book:\n");
+	printf("Name: ");
+	scanf(" %99[^\n]s",temp.name);
+
+	printf("Author: ");
+	scanf(" %99[^\n]s",temp.author);
+
+	printf("Number of '%s' Being Added in the Library: ",temp.name);
+	int book_num = 0;
+	while(book_num == 0) {
+		book_num = get_integer();
+	}
+	temp.status = 'y';
+	int stored_id[1000];        //stored generated_id
+	for(int i=0 ; i<book_num ; i++)
+	{
+		Book_cnt++;
+		int generated_id = generate_number(7);          //Generates 7 digit number between 1-9 (function from for_all.c)
+        check_again:
+    		for(int j=0 ; j<Book_cnt ; j++)
+    		{
+    			if(B[j].book_id == generated_id) {        // Generated Id is already present, then generated new id again
+    				generated_id = generate_number(7);
+    				goto check_again;                   // Ensures that generated id is not present
+    			}
+    		}
+    		for(int j=0 ; j<book_num ; j++)                //checks if generated number is already present
+    		{
+    			if(stored_id[j] == generated_id) {        // Generated Id is already present, then generated new id again
+    				generated_id = generate_number(7);
+    				goto check_again;                   // Ensures that generated id is not present
+    			}
+    		}
+    		stored_id[i] = generated_id;
+    		temp.book_id = generated_id;
+		fprintf(fp, " %d %s %s %c \n",temp.book_id,temp.author,temp.name,temp.status);
+	}
+	fclose(fp);
 }
 
 /*void return_book();
@@ -402,24 +457,24 @@ void search_book();
 
 void forgot(struct Human_data H)
 {
-    int generated_login_code = generate_number(6);
-    printf("\n\nLOGIN CODE HAS BEEN SENT TO YOU, IN PHONE NUMBER: %lld",H.phone_no);
-    printf("\n\n\nThis is How SMS in Phone Number %lld Looks like:\n",H.phone_no);
-    printf("----------------------------------------------------------------\n");
-    printf("Hello %s, Your Login Code is %d ",H.name,generated_login_code);
-    printf("\n----------------------------------------------------------------\n");
-    printf("\nEnter The Login Code: ");
-    int code;
-    scanf("%d",&code);
-    if(generated_login_code == code)
-    {
-        printf("Your password is: %s\n(Don't Forget that Again)", H.password);
-        //home_page(H);
-    }
-    else
-    {
-        printf("-----------Invalid Login Code-----------");
-    }
+	int generated_login_code = generate_number(6);
+	printf("\n\nLOGIN CODE HAS BEEN SENT TO YOU, IN PHONE NUMBER: %lld",H.phone_no);
+	printf("\n\n\nThis is How SMS in Phone Number %lld Looks like:\n",H.phone_no);
+	printf("----------------------------------------------------------------\n");
+	printf("Hello %s, Your Login Code is %d ",H.name,generated_login_code);
+	printf("\n----------------------------------------------------------------\n");
+	printf("\nEnter The Login Code: ");
+	int code;
+	scanf("%d",&code);
+	if(generated_login_code == code)
+	{
+		printf("Your password is: %s\n(Don't Forget that Again)", H.password);
+		home_page(H);
+	}
+	else
+	{
+		printf("-----------Invalid Login Code-----------");
+	}
 }
 
 
