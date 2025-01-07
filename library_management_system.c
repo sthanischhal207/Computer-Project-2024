@@ -33,8 +33,8 @@ void login_page(struct Human_data H[]);
 void signup_page(struct Human_data H[]);
 void home_page(struct Human_data H);
 void return_book();
-void borrow_book();
-void search_book();
+void borrow_book(struct Human_data H, struct Book_data B[]);
+void search_book(struct Book_data B[]);
 void add_book(struct Book_data B[]);
 
 void forgot(struct Human_data H);
@@ -99,6 +99,7 @@ int main()
 		       H[i].name,
 		       H[i].nbook);
 	}
+	printf("============================================================================================================");
 	printf("\n\n");
 	print_space(13);                //prints space UDF in for_all.c
 	printf("KATHMANDU INTERNATIONAL LIBRARY\n");
@@ -262,97 +263,98 @@ check_again:
 
 void home_page(struct Human_data H)
 {
-read_file_again:
-	//Reading of book_data.dat
-	FILE *fp = fopen("book_data.dat", "rb");
-	if (fp == NULL) {
-		fp = fopen("book_data.dat", "wb");  // Creates the file if not present
-		if (fp == NULL) {
-			printf("Failed to open or create the file");
-			return;  // Exit if file creation fails
-		}
-		fclose(fp);  // Close after creating the file
-	}
-	// Reopen the file for reading after creation
-	fp = fopen("book_data.dat", "rb");
-	if (fp == NULL) {
-		printf("Failed to open the file for reading");
-		return;  // Exit if the file can't be opened for reading
-	}
-
-	// Dynamically allocate memory for human data
-	struct Book_data *B = malloc(sizeof(struct Book_data));  // Start with space for 1 record
-	if (!B) {
-		printf("Memory allocation failed\n");
-		return ;
-	}
-	Book_cnt = 0;
-	while (fscanf(fp, " %d  %s %s %c \n",
-	              &B[Book_cnt].book_id,
-	              B[Book_cnt].author,
-	              B[Book_cnt].name,
-	              &B[Book_cnt].status) !=EOF) // Ensure all fields are correctly read
-	{
-		Book_cnt++;
-		B = realloc(B, (Book_cnt + 1) * sizeof(struct Book_data));
-		if (!B) {
-			printf("Memory reallocation failed\n");
-			free(B);
-			return ;
-		}
-
-	}
-	fclose(fp);
-
-
-	//=================================================================================================================
-
-	//Reading of BR_data.dat
-	fp = fopen("BR_data.dat", "rb");
-	if (fp == NULL) {
-		fp = fopen("BR_data.dat", "wb");  // Creates the file if not present
-		if (fp == NULL) {
-			printf("Failed to open or create the file");
-			return;  // Exit if file creation fails
-		}
-		fclose(fp);  // Close after creating the file
-	}
-	// Reopen the file for reading after creation
-	fp = fopen("BR_data.dat", "rb");
-	if (fp == NULL) {
-		printf("Failed to open the file for reading");
-		return;  // Exit if the file can't be opened for reading
-	}
-
-	// Dynamically allocate memory for human data
-	struct BR_data *BR = malloc(sizeof(struct BR_data));  // Start with space for 1 record
-	if (!BR) {
-		printf("Memory allocation failed\n");
-		return ;
-	}
-	BR_cnt = 0;
-	while (fscanf(fp, " %d %d %s %s \n",
-	              &BR[BR_cnt].book_id,
-	              &BR[BR_cnt].id,
-	              BR[BR_cnt].B_T,
-	              BR[BR_cnt].R_T) !=EOF) // Ensure all fields are correctly read
-	{
-		BR_cnt++;
-		BR = realloc(BR, (BR_cnt + 1) * sizeof(struct BR_data));
-		if (!BR) {
-			printf("Memory reallocation failed\n");
-			free(BR);
-			return ;
-		}
-
-	}
-	fclose(fp);
+    read_file_again:
+    	//Reading of book_data.dat
+    	FILE *fp = fopen("book_data.dat", "rb");
+    	if (fp == NULL) {
+    		fp = fopen("book_data.dat", "wb");  // Creates the file if not present
+    		if (fp == NULL) {
+    			printf("Failed to open or create the file");
+    			return;  // Exit if file creation fails
+    		}
+    		fclose(fp);  // Close after creating the file
+    	}
+    	// Reopen the file for reading after creation
+    	fp = fopen("book_data.dat", "rb");
+    	if (fp == NULL) {
+    		printf("Failed to open the file for reading");
+    		return;  // Exit if the file can't be opened for reading
+    	}
+    
+    	// Dynamically allocate memory for human data
+    	struct Book_data *B = malloc(sizeof(struct Book_data));  // Start with space for 1 record
+    	if (!B) {
+    		printf("Memory allocation failed\n");
+    		return ;
+    	}
+    	Book_cnt = 0;
+    	while (fscanf(fp, " %d  %s %s %c \n",
+    	              &B[Book_cnt].book_id,
+    	              B[Book_cnt].author,
+    	              B[Book_cnt].name,
+    	              &B[Book_cnt].status) !=EOF) // Ensure all fields are correctly read
+    	{
+    		Book_cnt++;
+    		B = realloc(B, (Book_cnt + 1) * sizeof(struct Book_data));
+    		if (!B) {
+    			printf("Memory reallocation failed\n");
+    			free(B);
+    			return ;
+    		}
+    
+    	}
+    	fclose(fp);
+    
+    
+    	//=================================================================================================================
+    
+    	//Reading of BR_data.dat
+    	fp = fopen("BR_data.dat", "rb");
+    	if (fp == NULL) {
+    		fp = fopen("BR_data.dat", "wb");  // Creates the file if not present
+    		if (fp == NULL) {
+    			printf("Failed to open or create the file");
+    			return;  // Exit if file creation fails
+    		}
+    		fclose(fp);  // Close after creating the file
+    	}
+    	// Reopen the file for reading after creation
+    	fp = fopen("BR_data.dat", "rb");
+    	if (fp == NULL) {
+    		printf("Failed to open the file for reading");
+    		return;  // Exit if the file can't be opened for reading
+    	}
+    
+    	// Dynamically allocate memory for human data
+    	struct BR_data *BR = malloc(sizeof(struct BR_data));  // Start with space for 1 record
+    	if (!BR) {
+    		printf("Memory allocation failed\n");
+    		return ;
+    	}
+    	BR_cnt = 0;
+    	while (fscanf(fp, " %d %d %s %s \n",
+    	              &BR[BR_cnt].book_id,
+    	              &BR[BR_cnt].id,
+    	              BR[BR_cnt].B_T,
+    	              BR[BR_cnt].R_T) !=EOF) // Ensure all fields are correctly read
+    	{
+    		BR_cnt++;
+    		BR = realloc(BR, (BR_cnt + 1) * sizeof(struct BR_data));
+    		if (!BR) {
+    			printf("Memory reallocation failed\n");
+    			free(BR);
+    			return ;
+    		}
+    
+    	}
+    	fclose(fp);
 
 
 	//=================================================================================================================
 
 
 	//The Following Codes are for Graphics
+	printf("============================================================================================================");
 	printf("\n\n\t\tWELCOME TO KATHMANDU INTERNATIONAL LIBRARY\n\t\tYour Gateway to Knowledge and Inspiration\n\n\n");
 	printf("Hello %s, We are dedicated to providing you with a seamless library experience.",H.name);
 
@@ -374,7 +376,7 @@ read_file_again:
 re:
 	printf("\n\nPlease select an option to proceed:\n1) Return a Book\n2) Borrow a Book\n3) Search for a Book\n");
 	//The Below code Displays Different UI For User and a Staff
-	H.type == 'u' ? printf("4)Log Out\n\nYour Choice: ") : printf("4)Add a Book\n5)Log Out\n\nYour Choice: ");
+	H.type == 'u' ? printf("4) Log Out\n\nYour Choice: ") : printf("4) Add a Book\n5) Log Out\n\nYour Choice: ");
 	int choice = 0;
 	while(choice == 0)
 	{
@@ -383,10 +385,13 @@ re:
 	if(choice == 1) { //return_book(H,B,BR);
 		goto read_file_again;
 	}
-	else if(choice == 2) { //borrow_book(H,B,BR);
+	else if(choice == 2) { 
+	    borrow_book(H,B);
 		goto read_file_again;
 	}
-	else if(choice == 3) { //search_book(B);
+	else if(choice == 3) { 
+	    search_book(B);
+	    goto re;
 	}
 	else if(choice == 4 && H.type == 'u') {
 		main();   //User has LogOut in option 4
@@ -412,10 +417,10 @@ void add_book(struct Book_data B[]) {
 	printf("Enter The Following Data of The Added Book:\n");
 	printf("Name: ");
 	scanf(" %99[^\n]s",temp.name);
-
+    trimWhitespace(temp.name);
 	printf("Author: ");
 	scanf(" %99[^\n]s",temp.author);
-
+    trimWhitespace(temp.author);
 	printf("Number of '%s' Being Added in the Library: ",temp.name);
 	int book_num = 0;
 	while(book_num == 0) {
@@ -449,10 +454,84 @@ void add_book(struct Book_data B[]) {
 	fclose(fp);
 }
 
-/*void return_book();
-void borrow_book();
-void search_book();
-*/
+//void return_book();
+
+void borrow_book(struct Human_data H, struct Book_data B[]){
+    if(H.nbook>5){          //Checks if the user has reached the limit of brrowing 5 books
+        printf("\n\nYou Have Reached Your Limit of Borrowing Books i.e. 5 Books");
+        return;
+    }
+    get_time(Time);         //get Current Time and Stores it in variable Time
+    printf("Have You Obtained ID of the Book You want To Borrow From Search Book Section (y/n): ");
+    if(getchar() == 'y'){
+        re:
+            printf("Enter the ID of the Book:");
+            int book_id = 0;
+        	while(book_id == 0) {
+        		book_id = get_integer();
+        	}
+        	int i;
+        	for(i=0 ; i<Book_cnt ; i++){
+        	    if(B[i].book_id == book_id){
+        	        break;
+        	    }
+        	}
+        	if(i == Book_cnt){          //If all the data were read and book id was Not found
+        	    printf("\n\n------------The Entered ID was Not Found, Can you Re-enter the ID------------");
+        	    goto re;
+        	}
+        	else{               //When Book was found
+        	    printf("You have successfully borrowed the book:\n");
+        	    printf("%s By %s\"n",B[i].name,B[i].author);
+        	    printf("The transaction has been recorded in the database. Thank you for using Kathmandu International Library!");
+        	    
+        	    H.nbook++;           //Number of Book brrowed by user increased by 1
+        	    B[i].status = 'n';      //Updating Avaibality of Book
+        	    
+        	    FILE *fp = fopen("BR_data.dat","ab");
+	            struct BR_data temp;
+	            temp.book_id = B[i].book_id;        
+	            temp.id = H.id;
+	            strcpy(temp.B_T,Time);
+	            strcpy(temp.R_T,"0");
+	            fprintf(fp, " %d %d %s %s \n",temp.book_id,temp.id,temp.B_T,temp.R_T);
+	            fclose(fp);
+        	}
+    }
+}
+
+
+void search_book(struct Book_data B[])
+{   
+    re:
+    	int required_book_index = -1;           //Stores the index of required book
+    	    char name[100];
+    	    printf("\nEnter the Following Details of the book you are looking for: ");
+    	    printf("\nName : ");
+    	    scanf(" %99[^\n]s",name);
+            trimWhitespace(name);
+            char author[100];
+    	    printf("\nAuthor : ");
+    	    scanf(" %99[^\n]s",author);
+            trimWhitespace(name);
+            
+            for(int i=0 ; i<Book_cnt ; i++)
+            {
+                if(strcasecmp(B[i].name,name)==0 && strcasecmp(B[i].author,author)==0 && B[i].status == 'y'){
+                    required_book_index = i;
+                    break;
+                }
+            }
+    	    
+    	if(required_book_index == -1){
+    	    printf("\nSorry, The Book You are searching for is Currently not available in our Library.\nPlease try again.\n");
+    	    goto re;
+    	}
+    	else{
+    	    printf("Id of the Book you are searching for is %d\n(Please remember this Id To Borrow The Book)\n",B[required_book_index].book_id);
+    	}
+}
+
 
 
 void forgot(struct Human_data H)
@@ -476,12 +555,3 @@ void forgot(struct Human_data H)
 		printf("-----------Invalid Login Code-----------");
 	}
 }
-
-
-
-
-
-
-
-
-
