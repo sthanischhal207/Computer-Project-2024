@@ -465,7 +465,7 @@ void return_book(struct Human_data *H, struct Book_data B[],struct BR_data BR[])
         int BR_index[6];        //To store index of Borrow and return Data
         int cnt = 0;            //counts no of book borrowed
         for(i=0 ;i<BR_cnt ; i++){
-            if(H->id == BR[i].id){           //If User has Borrowed the book
+            if(H->id == BR[i].id && strcasecmp(BR[i].R_T,"") == 0 ){           //If User has Borrowed the book
                 for(j=0 ; j<Book_cnt ; j++){
                     if(BR[i].book_id == B[j].book_id){
                         book_index[cnt]=j ;       //Stores Books index in book_index for future
