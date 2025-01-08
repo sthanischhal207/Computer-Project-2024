@@ -32,11 +32,11 @@ struct BR_data {            //BR represents Borrow or return
 //Primary UDF
 void login_page(struct Human_data H[],struct Book_data B[], struct BR_data BR[]);
 void signup_page(struct Human_data H[]);
-void home_page(struct Human_data *H,struct Book_data B[], struct BR_data BR[]);
+void home_page(struct Human_data H[],struct Book_data B[], struct BR_data BR[]);
 void return_book(struct Human_data *H, struct Book_data B[],struct BR_data BR[]);
 void borrow_book(struct Human_data *H, struct Book_data B[]);
 void search_book(struct Book_data B[]);
-void add_book(struct Human_data *H,struct Book_data B[], struct BR_data BR[]);
+void add_book(struct Human_data *H,struct Book_data B[]);
 
 void forgot(struct Human_data *H);
 
@@ -45,12 +45,11 @@ char Time[50]; // Array to store the time as string
 int Human_cnt = 0;          //Counts number of data of humans in database
 int Book_cnt = 0;           //Counts number of data of Books in database
 int BR_cnt = 0;             //Counts number of data of Borrow or Return in database
-
+int index_human;
 
 int main()
 {
 	Human_cnt = 0;
-
 	FILE *fp = fopen("human_data.dat", "rb");
 	if (fp == NULL) {
 		fp = fopen("human_data.dat", "wb");  // Creates the file if not present
@@ -114,7 +113,7 @@ int main()
 		return 1;
 	}
 	Book_cnt = 0;
-	while (fscanf(fp, " %d  %s %s %c \n",
+	while (fscanf(fp, " %d %s %s %c \n",
 	              &B[Book_cnt].book_id,
 	              B[Book_cnt].author,
 	              B[Book_cnt].name,
@@ -217,6 +216,7 @@ re:                 //return to this using goto if any mistake is done by user
 	}
 	else if(choice == 2) {
 		signup_page(H);
+		goto re;
 	}
 	else if(choice == 3) {
 	    //Updating human_data.dat at end 
@@ -264,7 +264,8 @@ void login_page(struct Human_data H[],struct Book_data B[], struct BR_data BR[])
         	scanf(" %[^\n]s", pass);
         	//trimWhitespace(pass);               //removes all the white space in the beginning and end (function from for_all.c)
             if(strcmp(pass,H[i].password) == 0) {          //Confirms the password from Database
-            	home_page(&H[i],B,BR);
+            	index_human = i;
+            	home_page(H,B,BR);
         	}
         	else if(strcasecmp(pass, "forgot") == 0) {      //if id is correct and password was forgotten, will go to forgot() function
     			forgot(&H[i]);
@@ -348,48 +349,84 @@ check_again:
 	fprintf(fp,"%c %d %s %llu %s %d \n",Temp.type, Temp.id, Temp.password, Temp.phone_no, Temp.name, Temp.nbook);
 	printf("\n\nYour Data has been Sucessfully Added to the System Database.\nThank You For Choosing Us\n");
 	fclose(fp);
-	main();
 }
 
 
 
-void home_page(struct Human_data *H,struct Book_data B[], struct BR_data BR[])
+void home_page(struct Human_data H[],struct Book_data B[], struct BR_data BR[])
 {
+    for(int i=0 ; i<Human_cnt; i++) {
+		printf(" %c %d %s %llu %s %d\n",
+		       H[i].type,
+		       H[i].id,
+		       H[i].password,
+		       H[i].phone_no,
+		       H[i].name,
+		       H[i].nbook);
+	}
     FILE *fp;
 re:
 	//The Following Codes are for Graphics
 	printf("============================================================================================================");
 	printf("\n\n\t\tWELCOME TO KATHMANDU INTERNATIONAL LIBRARY\n\t\tYour Gateway to Knowledge and Inspiration\n\n\n");
-	printf("Hello %s, We are dedicated to providing you with a seamless library experience.",H->name);
+	printf("Hello %s, We are dedicated to providing you with a seamless library experience.",H[index_human].name);
 
 	get_time(Time); // Pass the array to the function
 	printf("\n\nDate: %.10s\nTime: %s\n",Time,Time + 11);            //Displays Date and Time of that day
 
-	if(Book_cnt == 0 && H->type == 'u') {        //If No Book are available IN CASE OF USER
+	if(Book_cnt == 0 && H[index_human].type == 'u') {        //If No Book are available IN CASE OF USER
 		printf("\n\nSorry, no books are currently available.\n");
 		printf("Our staff needs to add book records to the system first.\n");
 		printf("Please check back later. Thank you for your understanding!\n");
 		exit(0);
 	}
-	if(Book_cnt == 0 && H->type == 's') {        //If No Book are available IN CASE OF STAFF
+	if(Book_cnt == 0 && H[index_human].type == 's') {        //If No Book are available IN CASE OF STAFF
 		printf("\n\nNo books are currently available.\nGoing to Add Book Feature............\n\n");
-		add_book(H,B,BR);
-		return;
+		add_book(&H[index_human],B);
+		goto re;
 	}
 	printf("\n\nPlease select an option to proceed:\n1) Return a Book\n2) Borrow a Book\n3) Search for a Book\n");
 	//The Below code Displays Different UI For User and a Staff
-	H->type == 'u' ? printf("4) Log Out\n\nYour Choice: ") : printf("4) Add a Book\n5) Log Out\n\nYour Choice: ");
+	H[index_human].type == 'u' ? printf("4) Log Out\n\nYour Choice: ") : printf("4) Add a Book\n5) Log Out\n\nYour Choice: ");
 	int choice = 0;
 	while(choice == 0)
 	{
 		choice = get_integer();
 	}
-	if(choice == 1) { return_book(H,B,BR);}
-	else if(choice == 2) { borrow_book(H,B);}
+	if(choice == 1) { return_book(&H[index_human],B,BR);}
+	else if(choice == 2) { borrow_book(&H[index_human],B);}
 	else if(choice == 3) { search_book(B);}
-	else if(choice == 4 && H->type == 'u') { main(); }               //User has LogOut in option 4
-	else if(choice == 4 && H->type == 's') { add_book(H,B,BR); }          //Staff has Add a Book in option 4
-	else if(choice == 5 && H->type == 's') { main();  }              //Staff has LogOut in option 5
+	else if(choice == 4 && H[index_human].type == 'u') {               //User has LogOut in option 4
+	//Updating human_data.dat at end 
+    	fp = fopen("human_data.dat","wb");
+    	if(fp == NULL){
+    	    printf("Error Opening File");
+    	    return ;
+    	}
+    	for(int i=0 ; i<Human_cnt ; i++){
+    	    fprintf(fp," %c %d %s %llu %s %d\n",H[i].type, H[i].id,H[i].password,H[i].phone_no,H[i].name,H[i].nbook);
+    	}
+    	fclose(fp);
+        getchar();   
+        getchar();
+		exit(0);
+	}
+	else if(choice == 4 && H[index_human].type == 's') { add_book(&H[index_human],B); }          //Staff has Add a Book in option 4
+	else if(choice == 5 && H[index_human].type == 's') {            //Staff has LogOut in option 5
+	//Updating human_data.dat at end 
+    	fp = fopen("human_data.dat","wb");
+    	if(fp == NULL){
+    	    printf("Error Opening File");
+    	    return ;
+    	}
+    	for(int i=0 ; i<Human_cnt ; i++){
+    	    fprintf(fp," %c %d %s %llu %s %d\n",H[i].type, H[i].id,H[i].password,H[i].phone_no,H[i].name,H[i].nbook);
+    	}
+    	fclose(fp);
+        getchar();   
+        getchar();
+		exit(0);
+	}
 	else {
 		printf("\n-----------%d is Invalid Input-----------",choice);
 		goto re;
@@ -404,7 +441,7 @@ re:
 	    return ;
 	}
 	for(int i=0 ; i<Book_cnt ; i++){
-	    fprintf(fp, " %d  %s %s %c \n",B[i].book_id,B[i].author,B[i].name,B[i].status);
+	    fprintf(fp, " %d %s %s %c \n",B[i].book_id,B[i].author,B[i].name,B[i].status);
 	}
 	fclose(fp);
 	
@@ -412,7 +449,7 @@ re:
 }
 
 
-void add_book(struct Human_data *H,struct Book_data B[], struct BR_data BR[]) {
+void add_book(struct Human_data *H,struct Book_data B[]) {
 	FILE *fp = fopen("book_data.dat","ab");
 	struct Book_data temp;
 	printf("Enter The Following Data of The Added Book:\n");
@@ -453,7 +490,6 @@ void add_book(struct Human_data *H,struct Book_data B[], struct BR_data BR[]) {
 		fprintf(fp, " %d %s %s %c \n",temp.book_id,temp.author,temp.name,temp.status);
 	}
 	fclose(fp);
-	home_page(H,B,BR);
 }
 
 void return_book(struct Human_data *H, struct Book_data B[],struct BR_data BR[])
@@ -505,7 +541,7 @@ void return_book(struct Human_data *H, struct Book_data B[],struct BR_data BR[])
 	    return ;
 	}
 	for(int i=0 ; i<BR_cnt ; i++){
-	    fprintf(fp, " %d %s %d  %s \n",BR[i].book_id,BR[i].B_T,BR[i].id,BR[i].R_T);
+	    fprintf(fp, " %d %s %d %s \n",BR[i].book_id,BR[i].B_T,BR[i].id,BR[i].R_T);
 	}
 	fclose(fp);
 }
