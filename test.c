@@ -69,17 +69,17 @@ int main()
 	// Dynamically allocate memory for human data
 	struct Human_data *H = malloc(sizeof(struct Human_data));  // Start with space for 1 record
 	if (!H) {
-		printf("Memory allocation failed\n");
+		printf("7Memory allocation failed\n");
 		return 1;
 	}
 
 	while (fscanf(fp, " %c %d %s %llu %s %d \n",
-            &H[Human_cnt].type, &H[Human_cnt].id,H[Human_cnt].password,&H[Human_cnt].phone_no,H[Human_cnt].name,&H[Human_cnt].nbook) !=EOF) // Ensure all fields are correctly read
+            &H[Human_cnt].type, &H[Human_cnt].id,H[Human_cnt].password,&H[Human_cnt].phone_no,H[Human_cnt].name,&H[Human_cnt].nbook) == 6) // Ensure all fields are correctly read
 	{
 		Human_cnt++;
 		H = realloc(H, (Human_cnt + 1) * sizeof(struct Human_data));
 		if (!H) {
-			printf("Memory reallocation failed\n");
+			printf("6Memory reallocation failed\n");
 			free(H);
 			return 1;
 		}
@@ -109,7 +109,7 @@ int main()
 	// Dynamically allocate memory for human data
 	struct Book_data *B = malloc(sizeof(struct Book_data));  // Start with space for 1 record
 	if (!B) {
-		printf("Memory allocation failed\n");
+		printf("5Memory allocation failed\n");
 		return 1;
 	}
 	Book_cnt = 0;
@@ -117,12 +117,12 @@ int main()
 	              &B[Book_cnt].book_id,
 	              B[Book_cnt].author,
 	              B[Book_cnt].name,
-	              &B[Book_cnt].status) !=EOF) // Ensure all fields are correctly read
+	              &B[Book_cnt].status) == 4) // Ensure all fields are correctly read
 	{
 		Book_cnt++;
 		B = realloc(B, (Book_cnt + 1) * sizeof(struct Book_data));
 		if (!B) {
-			printf("Memory reallocation failed\n");
+			printf("4Memory reallocation failed\n");
 			free(B);
 			return 1;
 		}
@@ -151,28 +151,29 @@ int main()
 	}
 
 	// Dynamically allocate memory for human data
-	struct BR_data *BR = malloc(sizeof(struct BR_data));  // Start with space for 1 record
-	if (!BR) {
-		printf("Memory allocation failed\n");
-		return 1;
-	}
-	BR_cnt = 0;
-	while (fscanf(fp, " %d %s %d %s \n",
-	              &BR[BR_cnt].book_id,
-	              BR[BR_cnt].B_T,
-	              &BR[BR_cnt].id,
-	              BR[BR_cnt].R_T) !=EOF) // Ensure all fields are correctly read
-	{
-		BR_cnt++;
-		BR = realloc(BR, (BR_cnt + 1) * sizeof(struct BR_data));
-		if (!BR) {
-			printf("Memory reallocation failed\n");
-			free(BR);
-			return 1;
-		}
+	struct BR_data *BR = malloc(sizeof(struct BR_data));  
+if (!BR) {
+    printf("Memory allocation failed\n");
+    return 1;
+}
 
-	}
-	fclose(fp);
+BR_cnt = 0;
+while (fscanf(fp, " %d \n %s \n %d \n %s \n",
+              &BR[BR_cnt].book_id,
+              BR[BR_cnt].B_T,
+              &BR[BR_cnt].id,
+              BR[BR_cnt].R_T) == 4) {
+    BR_cnt++;
+    printf("Reallocating memory for record: %d\n", BR_cnt);
+    struct BR_data *temp = realloc(BR, (BR_cnt + 1) * sizeof(struct BR_data));
+    if (!temp) {
+        printf("Memory reallocation failed at count %d\n", BR_cnt);
+        free(BR);
+        return 1;
+    }
+    BR = temp;
+}
+
 
 
 	//=================================================================================================================
@@ -501,7 +502,7 @@ void return_book(struct Human_data *H, struct Book_data B[],struct BR_data BR[])
         int BR_index[6];        //To store index of Borrow and return Data
         int cnt = 0;            //counts no of book borrowed
         for(i=0 ;i<BR_cnt ; i++){
-            if(H->id == BR[i].id && strcasecmp(BR[i].R_T,"") == 0 ){           //If User has Borrowed the book
+            if(H->id == BR[i].id && strcasecmp(BR[i].R_T,"abc") == 0 ){           //If User has Borrowed the book
                 for(j=0 ; j<Book_cnt ; j++){
                     if(BR[i].book_id == B[j].book_id){
                         book_index[cnt]=j ;       //Stores Books index in book_index for future
@@ -529,6 +530,7 @@ void return_book(struct Human_data *H, struct Book_data B[],struct BR_data BR[])
 	    printf("Thank you for returning the book: %s by %s.\nWe hope you enjoyed reading it! Have a great day!",B[return_index].name, B[return_index].author);
 	    
 	    get_time(Time);         //get Current Time and Stores it in variable Time
+	    trimWhitespace(Time);
 	    //Updating the changes that occours after returning book
 	    H->nbook--;
 	    B[return_index].status = 'y';
@@ -541,7 +543,7 @@ void return_book(struct Human_data *H, struct Book_data B[],struct BR_data BR[])
 	    return ;
 	}
 	for(int i=0 ; i<BR_cnt ; i++){
-	    fprintf(fp, " %d %s %d %s \n",BR[i].book_id,BR[i].B_T,BR[i].id,BR[i].R_T);
+	    fprintf(fp, " %d \n %s \n %d \n %s \n",BR[i].book_id,BR[i].B_T,BR[i].id,BR[i].R_T);
 	}
 	fclose(fp);
 }
@@ -555,6 +557,8 @@ void borrow_book(struct Human_data *H, struct Book_data B[]){
     printf("Have You Obtained ID of the Book You want To Borrow From Search Book Section (y/n): ");
     getchar();
     if(getchar() == 'y'){
+        FILE *fp = fopen("BR_data.dat","ab");
+        struct BR_data temp;
         re:
             printf("Enter the ID of the Book:");
             int book_id = 0;
@@ -578,17 +582,15 @@ void borrow_book(struct Human_data *H, struct Book_data B[]){
         	    
         	    H->nbook++;           //Number of Book brrowed by user increased by 1
         	    B[i].status = 'n';      //Updating Avaibality of Book
-        	    
-        	    FILE *fp = fopen("BR_data.dat","ab");
-	            struct BR_data temp;
 	            BR_cnt++;           //updating number of BR data
 	            temp.book_id = B[i].book_id;        
 	            temp.id = H->id;
+	            trimWhitespace(Time);
 	            strcpy(temp.B_T,Time);
-	            strcpy(temp.R_T,"");
-	            fprintf(fp, " %d %d %s %s \n",temp.book_id,temp.id,temp.B_T,temp.R_T);
-	            fclose(fp);
+	            strcpy(temp.R_T,"abc");
+	            fprintf(fp, " %d \n %s \n %d \n %s \n",temp.book_id,temp.B_T,temp.id,temp.R_T);
         	}
+        fclose(fp);
     }
 }
 
