@@ -173,6 +173,7 @@ while (fscanf(fp, " %d \n %s \n %d \n %s \n",
     }
     BR = temp;
 }
+	fclose(fp);
 
 
 
