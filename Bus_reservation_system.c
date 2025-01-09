@@ -13,19 +13,26 @@ struct Bus_data{
     unsigned long long array[50];         //Stores the array of phone no in the seat which are booked else stores 0
     char from[50];          //Stores Start Destination of Bus
     char to[50];            //Stores End destination of Bus 
-    char Time[10];          //Stores Time of Departure
+    char Time[15];          //Stores Time of Departure
     int price;              //Stores the Price of Bus Ticket
 };
 
-//UDFs
+//Primary UDFs
 void home_page();
+void booking_page(struct Bus_data B[]);
+void refund_page(struct Bus_data B[]);
+
+//Secondary UDFs
+void display_seats(struct Bus_data B);
+void display_bus(struct Bus_data B);
+void display_headings();
 
 
 
 //Global Variable
-unsigned long long phone_no;        //Stores Phone Number of the user
+unsigned long long phone_no = 0;        //Stores Phone Number of the user
 int Bus_cnt;            //Stores Total Number of Bus
-
+int graphics_cnt;        //Used For Displaying Bus Data  
 
 
 int main(){
@@ -33,9 +40,34 @@ int main(){
     printf("|               BUS RESERVATION SYSTEM                |\n");
     printf("-------------------------------------------------------\n");
     printf("\nEnter Your Phone Number to proceed: ");
-    
-    home_page();
-    
+    while(phone_no == 0){
+        phone_no = get_unsignedlonglong();
+        /*int check =phone_no/pow(10,9);
+		if( check != 9) {
+			printf("-------------Phone Number Must Contain 10 digits and Start with 9-------------\n\nPhone Number: ");
+			phone_no = 0;
+		}*/
+    }
+    int generated_login_code;
+	re:
+	generated_login_code = generate_number(4);             //generates 4 digit login code
+	printf("\n\nLOGIN CODE HAS BEEN SENT TO YOU, IN PHONE NUMBER: %llu",phone_no);
+	printf("\n\n\nThis is How SMS in Phone Number %llu Looks like:\n",phone_no);
+	printf("----------------------------------------------------------------\n");
+	printf("Thank You for choosing Us\nYour Login Code is %d ",generated_login_code);
+	printf("\n----------------------------------------------------------------\n");
+	printf("\nEnter The Login Code: ");
+	int code = 0;
+	while( code == 0){
+        code = get_integer();
+    }
+	if(generated_login_code == code) {
+		home_page();
+	}
+	else {
+		printf("-----------Invalid Login Code-----------");
+		goto re;
+	}    
     
 }
 
@@ -66,7 +98,7 @@ void home_page(){
         return ;
     }
     Bus_cnt = 0;
-    while (fscanf(fp, " %s\n%d\t%d\n", 
+    while (fscanf(fp, "%s\n%d\n%d\n", 
                    B[Bus_cnt].id, 
                    &B[Bus_cnt].T_seats, 
                    &B[Bus_cnt].A_seats) == 3)  // Read ID, total seats, available seats
@@ -77,10 +109,10 @@ void home_page(){
         }
     
         // Read From and To locations
-        fscanf(fp, " %s\t%s\n", B[Bus_cnt].from, B[Bus_cnt].to);
+        fscanf(fp, "%s\n%s\n", B[Bus_cnt].from, B[Bus_cnt].to);
     
         // Read time and price
-        fscanf(fp, " %s\t%d", B[Bus_cnt].Time, &B[Bus_cnt].price);
+        fscanf(fp, "%s\n%d\n", B[Bus_cnt].Time, &B[Bus_cnt].price);
     
         Bus_cnt++;
         B = realloc(B, (Bus_cnt + 1) * sizeof(struct Bus_data));
@@ -95,6 +127,7 @@ void home_page(){
 
     
     
+    printf("%d",Bus_cnt);
     
     
     
@@ -131,7 +164,7 @@ void home_page(){
     
     
     
-    
+    re:
     printf("\n-------------------------------------------------------\n");
     printf("|               BUS RESERVATION SYSTEM                |\n");
     printf("-------------------------------------------------------\n");
@@ -146,8 +179,68 @@ void home_page(){
     printf("|                                                     |\n");
     printf("-------------------------------------------------------\n");
     printf("Your Choice:");
+    int choice = 0;
+	while(choice == 0 )        //This Handles ValueError
+	{
+		choice = get_integer();
+	}
+	if(choice == 1) { booking_page(B); }
+	else if(choice == 2) { refund_page(B); }
+    else if(choice == 3){ }
+	else if(choice > 4) {   
+		printf("\n--------CHOOSE AMONG 1, 2, 3, 4--------\n\n");
+	}
+
+    if(choice == 4) { exit(0); }
+	goto re;
 }
 
 
 
+
+void display_headings(){
+    printf("\n\nSN");
+    print_space(4);
+    printf("Bus ID");
+    print_space(8);
+    printf("Destination");
+    print_space(20);
+    printf("Available Seats");
+    print_space(3);
+    printf("Price");
+    print_space(3);
+    printf("Time of Departure");
+}
+
+void display_bus(struct Bus_data B)
+{
+    graphics_cnt++;                 //increase graphics count
+    printf("\n%d",graphics_cnt);
+    print_space(6 - cnt_digits(graphics_cnt));
+    printf("%s",B.id);
+    print_space(14 - strlen(B.id));
+    printf("%s to %s",B.from,B.to);
+    print_space(28 - strlen(B.from) - strlen(B.to));
+    printf("%d",B.A_seats);
+    print_space(18 - cnt_digits(B.A_seats));
+    printf("%s",B.Time);
+}
+
+
+void display_seats(struct Bus_data B){
+    char result[15];
+    for(int i=0; i<(B.T_seats - 5) ; i++){    //Looping through Bus's Seats
+        B.array[i] = 0 ? strcpy(result,"Available") : strcpy(result,"Booked");
+        printf("%d) %s",i+1,result);
+        print_space(20 - strlen(result));
+        if((i+1) % 4 == 0){ printf("\n"); }
+        else if((i+1) % 2 == 0){ printf("\t\t"); }
+    }
+    for(int i=(B.T_seats - 5); i<5 ; i++){    //Looping through Bus's last 5 Seats
+        B.array[i] = 0 ? strcpy(result,"Available") : strcpy(result,"Booked");
+        printf("%d) %s",i+1,result);
+        print_space(20 - strlen(result));
+    }
+    
+}
 
