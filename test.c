@@ -283,7 +283,6 @@ void login_page(struct Human_data H[],struct Book_data B[], struct BR_data BR[])
 
 void signup_page(struct Human_data H[])
 {
-	Human_cnt++;
 	struct Human_data Temp;
 	int generated_id = generate_number(5);          //Generates 5 digit number between 1-9 (function from for_all.c)
 	int i;
@@ -295,17 +294,16 @@ check_again:
 			goto check_again;                   // Ensures that generated id is not present
 		}
 	}
+	Human_cnt++;
 	Temp.id = generated_id;
 	printf("\n\nSystem Generated Your Id as %d\n(Please kindly remember it carefully)",generated_id);
 
 	printf("\nSet Your Password: ");
-	getchar();          //fflush(stdin);
-	scanf("%[^\n]s", Temp.password);
+	scanf(" %[^\n]s", Temp.password);
 	trimWhitespace(Temp.password);          //removes all the white space in the beginning and end (function from for_all.c)
     
 	printf("Enter Your Name: ");
-	getchar();
-	scanf("%[^\n]s", Temp.name);
+	scanf(" %[^\n]s", Temp.name);
 	trimWhitespace(Temp.name);          //removes all the white space in the beginning and end (function from for_all.c)
 
 	printf("Phone Number: ");
@@ -326,8 +324,7 @@ check_again:
 
 	char decision;
 	printf("Are You Sure You want to Sign Up (y/n): ");
-	getchar();
-	scanf("%c", &decision);
+	scanf(" %c", &decision);
 	fflush(stdin);
 
 	if(decision == 'y') {
@@ -347,7 +344,11 @@ check_again:
 		printf("Failed to open the file for appending");
 		return ;  // Exit if the file can't be opened for appending
 	}
-	fprintf(fp,"%c %d %s %llu %s %d \n",Temp.type, Temp.id, Temp.password, Temp.phone_no, Temp.name, Temp.nbook);
+	if (fprintf(fp, "%c %d %s %llu %s %d\n", Temp.type, Temp.id, Temp.password, Temp.phone_no, Temp.name, Temp.nbook) < 0) {
+    perror("Failed to write data to the file");
+} else {
+    printf("\n\nYour Data has been Successfully Added to the System Database.\nThank You For Choosing Us\n");
+}
 	printf("\n\nYour Data has been Sucessfully Added to the System Database.\nThank You For Choosing Us\n");
 	fclose(fp);
 }
