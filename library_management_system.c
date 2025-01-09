@@ -330,7 +330,6 @@ void home_page(struct Human_data H[])
 	if(Book_cnt == 0 && H[Human_index].type == 's') {        //If No Book are available IN CASE OF STAFF
 		printf("\n\nNo books are currently available.\nGoing to Add Book Feature............\n\n");
 		add_book(&H[Human_index],B);
-		return;
 	}
 
 re:
