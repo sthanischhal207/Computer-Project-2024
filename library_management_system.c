@@ -608,8 +608,8 @@ void forgot(struct Human_data *H)
 	int generated_login_code;
 	re:
 	generated_login_code = generate_number(6);
-	printf("\n\nLOGIN CODE HAS BEEN SENT TO YOU, IN PHONE NUMBER: %lld",H->phone_no);
-	printf("\n\n\nThis is How SMS in Phone Number %lld Looks like:\n",H->phone_no);
+	printf("\n\nLOGIN CODE HAS BEEN SENT TO YOU, IN PHONE NUMBER: %llu",H->phone_no);
+	printf("\n\n\nThis is How SMS in Phone Number %llu Looks like:\n",H->phone_no);
 	printf("----------------------------------------------------------------\n");
 	printf("Hello %s, Your Login Code is %d ",H->name,generated_login_code);
 	printf("\n----------------------------------------------------------------\n");
