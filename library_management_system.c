@@ -87,15 +87,7 @@ int main()
 
 	}
 	fclose(fp);
-	for(int i=0 ; i<Human_cnt; i++) {
-		printf(" %c %d %s %llu %s %d\n",
-		       H[i].type,
-		       H[i].id,
-		       H[i].password,
-		       H[i].phone_no,
-		       H[i].name,
-		       H[i].nbook);
-	}
+	
 	printf("============================================================================================================");
 	printf("\n\n");
 	print_space(13);                //prints space UDF in for_all.c
@@ -193,26 +185,22 @@ check_again:
 	printf("\n\nSystem Generated Your Id as %d\n(Please kindly remember it carefully)",generated_id);
 
 	printf("\nSet Your Password: ");
-	getchar();          //fflush(stdin);
-	scanf("%[^\n]s", Temp.password);
+	scanf(" %[^\n]s", Temp.password);
 	trimWhitespace(Temp.password);          //removes all the white space in the beginning and end (function from for_all.c)
     
 	printf("Enter Your Name: ");
-	getchar();
-	scanf("%[^\n]s", Temp.name);
+	scanf(" %[^\n]s", Temp.name);
 	trimWhitespace(Temp.name);          //removes all the white space in the beginning and end (function from for_all.c)
 
 	printf("Phone Number: ");
 	unsigned long long phoneNo = 0;
-	while(phoneNo == 0)         //it handel ValueError
-	{
+	while(phoneNo == 0){         //it handel ValueError
 		phoneNo = get_unsignedlonglong();
-		/*int check =phoneNo/pow(10,9);
-		if( check != 9)
-		{
+		int check =phoneNo/pow(10,9);
+		if( check != 9) {
 			printf("-------------Phone Number Must Contain 10 digits and Start with 9-------------\n\nPhone Number: ");
 			phoneNo = 0;
-		}*/
+		}
 	}
 	Temp.phone_no = phoneNo;
 
@@ -220,20 +208,12 @@ check_again:
 
 	char decision;
 	printf("Are You Sure You want to Sign Up (y/n): ");
-	getchar();
-	scanf("%c", &decision);
+	scanf(" %c", &decision);
 	fflush(stdin);
 
-	if(decision == 'y') {
-		Temp.type = 'u';
-	}
-	else if(decision == 's') {
-		Temp.type = 's';
-	}
-	else {
-		return;
-	}
-
+	if(decision == 'y') { Temp.type = 'u'; }
+	else if(decision == 's') { Temp.type = 's'; }
+	else { return; }
 
 	//open the file for appending
 	FILE *fp = fopen("human_data.dat", "ab");
@@ -252,7 +232,6 @@ check_again:
 void home_page(struct Human_data H[])
 {
     FILE *fp;
-    
     //Reading of BR_data.dat
 	fp = fopen("BR_data.dat", "rb");
 	if (fp == NULL) {
@@ -286,7 +265,6 @@ void home_page(struct Human_data H[])
 			free(BR);
 			return ;
 		}
-
 	}
 	fclose(fp);
 
@@ -317,11 +295,7 @@ void home_page(struct Human_data H[])
 		return ;
 	}
 	Book_cnt = 0;
-	while (fscanf(fp, " %d  %s %s %c \n",
-	              &B[Book_cnt].book_id,
-	              B[Book_cnt].author,
-	              B[Book_cnt].name,
-	              &B[Book_cnt].status) == 4) // Ensure all fields are correctly read
+	while (fscanf(fp, " %d  %s %s %c \n",&B[Book_cnt].book_id, B[Book_cnt].author, B[Book_cnt].name, &B[Book_cnt].status) == 4) // Ensure all fields are correctly read
 	{
 		Book_cnt++;
 		B = realloc(B, (Book_cnt + 1) * sizeof(struct Book_data));
@@ -333,7 +307,6 @@ void home_page(struct Human_data H[])
 
 	}
 	fclose(fp);
-
 
 	//=================================================================================================================
 
@@ -361,15 +334,11 @@ void home_page(struct Human_data H[])
 	}
 
 re:
-for(int i=0 ; i<BR_cnt ; i++){
-    printf(" %d %s %d %s \n",BR[i].book_id,BR[i].B_T,BR[i].id,BR[i].R_T);
-    }
 	printf("\n\nPlease select an option to proceed:\n1) Return a Book\n2) Borrow a Book\n3) Search for a Book\n");
 	//The Below code Displays Different UI For User and a Staff
 	H[Human_index].type == 'u' ? printf("4) Log Out\n\nYour Choice: ") : printf("4) Add a Book\n5) Log Out\n\nYour Choice: ");
 	int choice = 0;
-	while(choice == 0)
-	{
+	while(choice == 0) {
 		choice = get_integer();
 	}
 	if(choice == 1) { return_book(&H[Human_index],B,BR);}
@@ -420,8 +389,7 @@ for(int i=0 ; i<BR_cnt ; i++){
 	for(int i=0 ; i<Book_cnt ; i++){
 	    fprintf(fp, " %d  %s %s %c \n",B[i].book_id,B[i].author,B[i].name,B[i].status);
 	}
-	fclose(fp);
-	
+	fclose(fp); 
 	goto re;           //Wont end until User LogOut
 }
 
@@ -467,15 +435,26 @@ void add_book(struct Human_data *H,struct Book_data B[]) {
 		fprintf(fp, " %d %s %s %c \n",temp.book_id,temp.author,temp.name,temp.status);
 	}
 	fclose(fp);
-	home_page(H);
+
+    //Reading book_data.dat
+	fp = fopen("book_data.dat", "rb");
+	Book_cnt = 0;
+	while (fscanf(fp, " %d  %s %s %c \n", &B[Book_cnt].book_id, B[Book_cnt].author, B[Book_cnt].name, &B[Book_cnt].status) == 4) // Ensure all fields are correctly read
+	{
+		Book_cnt++;
+		B = realloc(B, (Book_cnt + 1) * sizeof(struct Book_data));
+		if (!B) {
+			printf("Memory reallocation failed\n");
+			free(B);
+			return ;
+		}
+	}
+	fclose(fp);
 }
 
 void return_book(struct Human_data *H, struct Book_data B[],struct BR_data BR[])
 {
     re:
-    for(int i=0 ; i<BR_cnt ; i++){
-    printf(" %d\n%s\n%d\n%s \n",BR[i].book_id,BR[i].B_T,BR[i].id,BR[i].R_T);
-    }
         printf("Please Select The Book You want to Return:\n");
         int i,j;
         int book_index[6];      //To store index of books borrowed
@@ -508,7 +487,6 @@ void return_book(struct Human_data *H, struct Book_data B[],struct BR_data BR[])
             home_page(H);
             return;
         }
-        
         printf("\nYour Choice: ");
         int choice = 0;
         while (choice == 0) {
@@ -603,9 +581,9 @@ void search_book(struct Book_data B[])
         scanf(" %99[^\n]s",name);
         trimWhitespace(name);
         
-        printf("\nAuthor : ");
+        printf("Author : ");
         scanf(" %99[^\n]s",author);
-        trimWhitespace(name);
+        trimWhitespace(author);
         
         for(int i=0 ; i<Book_cnt ; i++)
         {
@@ -620,7 +598,7 @@ void search_book(struct Book_data B[])
     	    goto re;
     	}
     	else{
-    	    printf("Id of the Book you are searching for is %d\n(Please remember this Id To Borrow The Book)\n",B[required_book_index].book_id);
+    	    printf("\nId of the Book you are searching for is %d\n(Please remember this Id To Borrow The Book)\n",B[required_book_index].book_id);
     	}
 }
 
@@ -628,8 +606,9 @@ void search_book(struct Book_data B[])
 
 void forgot(struct Human_data *H)
 {
-    re:
-	int generated_login_code = generate_number(6);
+	int generated_login_code;
+	re:
+	generated_login_code = generate_number(6);
 	printf("\n\nLOGIN CODE HAS BEEN SENT TO YOU, IN PHONE NUMBER: %lld",H->phone_no);
 	printf("\n\n\nThis is How SMS in Phone Number %lld Looks like:\n",H->phone_no);
 	printf("----------------------------------------------------------------\n");
@@ -638,12 +617,10 @@ void forgot(struct Human_data *H)
 	printf("\nEnter The Login Code: ");
 	int code;
 	scanf("%d",&code);
-	if(generated_login_code == code)
-	{
+	if(generated_login_code == code) {
 		printf("Your password is: %s\n(Don't Forget that Again)", H->password);
 	}
-	else
-	{
+	else {
 		printf("-----------Invalid Login Code-----------");
 		goto re;
 	}
