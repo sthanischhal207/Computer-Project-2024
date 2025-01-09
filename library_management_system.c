@@ -614,8 +614,10 @@ void forgot(struct Human_data *H)
 	printf("Hello %s, Your Login Code is %d ",H->name,generated_login_code);
 	printf("\n----------------------------------------------------------------\n");
 	printf("\nEnter The Login Code: ");
-	int code;
-	scanf("%d",&code);
+	int code = 0;
+	while( code == 0){
+        code = get_integer();
+    	}
 	if(generated_login_code == code) {
 		printf("Your password is: %s\n(Don't Forget that Again)", H->password);
 	}
