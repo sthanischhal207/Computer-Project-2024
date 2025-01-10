@@ -606,6 +606,7 @@ void search_book(struct Book_data B[])
 void forgot(struct Human_data *H)
 {
 	int generated_login_code;
+	int chance = 0;
 	re:
 	generated_login_code = generate_number(6);
 	printf("\n\nLOGIN CODE HAS BEEN SENT TO YOU, IN PHONE NUMBER: %llu",H->phone_no);
@@ -622,6 +623,11 @@ void forgot(struct Human_data *H)
 		printf("Your password is: %s\n(Don't Forget that Again)", H->password);
 	}
 	else {
+		chance++;
+	    if(chance>5){           //Auto cancel if code is wrong more thann 5 times
+		printf("\n\n-------Invalid Code Multiple Time--------\n\n");
+		return 0;
+	    }
 		printf("-----------Invalid Login Code-----------");
 		goto re;
 	}
