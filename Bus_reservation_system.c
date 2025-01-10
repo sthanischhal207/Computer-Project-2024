@@ -69,7 +69,7 @@ int main(){
 	}
 	else {
 	    chance++;
-	    if(chance>5){
+	    if(chance>5){ 		//Auto cancel if code is wrong more thann 5 times
 	        printf("\n\n-------Invalid Code Multiple Time--------\n\n");
 	        return 0;
 	    }
@@ -409,7 +409,7 @@ void refund_page(struct Bus_data B[]){
 	}
 	else {
 	    chance++;
-	    if(chance>5){
+	    if(chance>5){		 //Auto cancel if code is wrong more thann 5 times
 	        printf("\n\n-------Invalid Code Multiple Time--------\n\n");
 	        return ;
 	    }
