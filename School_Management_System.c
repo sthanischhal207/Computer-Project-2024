@@ -185,134 +185,159 @@ void view_stored_data()
 
 void edit_details()
 {
-   struct Students S[Total_std];
-    fp = fopen("std_details.dat","rb");
-    if(fp == NULL) {
-        printf("\nError opening file!\n Make Sure you have created std_number.dat  and std_details.dat in the same Folder.\n");
+    struct Students S[Total_std];
+    fp = fopen("std_details.dat", "rb");
+    if (fp == NULL) {
+        printf("\nError opening file!\n Make sure you have created std_number.dat and std_details.dat in the same folder.\n");
         exit(1);
     }
     // Read the structure from the file
-    fread(&S, sizeof(struct Students), Total_std, fp);
+    fread(S, sizeof(struct Students), Total_std, fp);
     fclose(fp);
-    fp = fopen("std_details.dat","wb");
-    if(fp == NULL) {
-        printf("\nError opening file!\n Make Sure you have created std_number.dat  and std_details.dat in the same Folder.\n");
-        exit(1);
-    }
+
     do
     {    
         printf("\n\n----------Stored Student Details----------\n\n");
         table_head();
-        print_in_table(S,Total_std,'y');
+        print_in_table(S, Total_std, 'y');
+        
         char f_name[20];
-        printf("\nEnter First Name of std you want to edit: ");
-        getchar();
+        printf("\nEnter First Name of student you want to edit: ");
+        getchar(); // Clear buffer
         scanf("%20[^\n]s", f_name);
+        
         int roll_no = 0;
-        while(roll_no == 0){        //This Handles ValueError
+        while (roll_no == 0) {
             printf("His/Her Roll Number: ");
             roll_no = get_integer();
         }
-        for(int i=0 ; i<Total_std ; i++)
+        
+        for (int i = 0; i < Total_std; i++)
         {
-            if(S[i].roll_no == roll_no && strcasecmp(S[i].f_name,f_name) == 0)
+            if (S[i].roll_no == roll_no && strcasecmp(S[i].f_name, f_name) == 0)
             {
                 printf("\n\nEnter New Details:\n");
                 printf("First Name: ");
                 scanf(" %20[^\n]s", S[i].f_name);
                 printf("Last Name: ");
                 scanf(" %20[^\n]s", S[i].l_name);
+                
                 S[i].roll_no = 0;
-                while(S[i].roll_no == 0){        //This Handles ValueError
+                while (S[i].roll_no == 0) {
                     printf("Roll Number: ");
                     S[i].roll_no = get_integer();
                 }
+                
                 S[i].class = 0;
-                while(S[i].class == 0){      //This Handles ValueError
+                while (S[i].class == 0) {
                     printf("Class: ");
                     S[i].class = get_integer();
                 }
+                
                 printf("Section: ");
                 scanf(" %5[^\n]s", S[i].section);
                 printf("Course: ");
                 scanf(" %30[^\n]s", S[i].course);
+                
                 trimWhitespace(S[i].f_name);
                 trimWhitespace(S[i].l_name);
                 trimWhitespace(S[i].section);
                 trimWhitespace(S[i].course);
+                
+                fp = fopen("std_details.dat", "wb");
+                if (fp == NULL) {
+                    printf("\nError opening file!\n Make sure you have created std_number.dat and std_details.dat in the same folder.\n");
+                    exit(1);
+                }
                 fwrite(S, sizeof(struct Students), Total_std, fp);
+                fclose(fp);
+                
                 printf("\n\n-----Details Updated-----\n");
                 break;
             }
-            else if(i == Total_std-1){
+            else if (i == Total_std - 1) {
                 printf("\n\n--------Student Not Found--------\n");
             }
         }
+        
         sort_data_f_name(S);
         printf("\n\nDo you want to edit another student? (y/n): ");
-        getchar();
+        getchar(); // Clear buffer
     }
-    while(tolower(getchar())=='y');
-    fclose(fp);
+    while (tolower(getchar()) == 'y');
 }
+
 
 
 void delete_details()
 {
     struct Students S[Total_std];
-    fp = fopen("std_details.dat","rb");
-    if(fp == NULL) {
-        printf("\nError opening file!\n Make Sure you have created std_number.dat  and std_details.dat in the same Folder.\n");
+    fp = fopen("std_details.dat", "rb");
+    if (fp == NULL) {
+        printf("\nError opening file!\n Make sure you have created std_number.dat and std_details.dat in the same folder.\n");
         exit(1);
     }
     // Read the structure from the file
-    fread(&S, sizeof(struct Students), Total_std, fp);
+    fread(S, sizeof(struct Students), Total_std, fp);
     fclose(fp);
-    fp = fopen("std_details.dat","wb");
-    if(fp == NULL) {
-        printf("\nError opening file!\n Make Sure you have created std_number.dat  and std_details.dat in the same Folder.\n");
-        exit(1);
-    }
+
     do
     {    
-        if(Total_std == 0){
-            printf("\n\n-----All the Students Details have been deleted-----\n\n");
+        if (Total_std == 0){
+            printf("\n\n-----All the Students' Details have been deleted-----\n\n");
             break;
         }
+        
         printf("\n\n----------Stored Student Details----------\n\n");
         table_head();
-        print_in_table(S,Total_std,'y');
+        print_in_table(S, Total_std, 'y');
+        
         char f_name[20];
-        printf("\nEnter First Name of std you want to delete: ");
+        printf("\nEnter First Name of student you want to delete: ");
+        getchar(); // Clear buffer
         scanf(" %20[^\n]s", f_name);
         trimWhitespace(f_name);
+        
         int roll_no = 0;
-        while(roll_no == 0){        //This Handles ValueError
+        while (roll_no == 0) {
             printf("His/Her Roll Number: ");
             roll_no = get_integer();
         }
-        for(int i=0 ; i<Total_std ; i++) {
-            if(S[i].roll_no == roll_no && strcasecmp(S[i].f_name,f_name) == 0){
-                for(int j=i ; j<(Total_std-i) ; j++){
-                    S[j] = S[j+1];
+        
+        for (int i = 0; i < Total_std; i++)
+        {
+            if (S[i].roll_no == roll_no && strcasecmp(S[i].f_name, f_name) == 0)
+            {
+                for (int j = i; j < Total_std - 1; j++) {
+                    S[j] = S[j + 1];
                 }
                 Total_std--;
+                
+                fp = fopen("std_details.dat", "wb");
+                if (fp == NULL) {
+                    printf("\nError opening file!\n Make sure you have created std_number.dat and std_details.dat in the same folder.\n");
+                    exit(1);
+                }
                 fwrite(S, sizeof(struct Students), Total_std, fp);
-                printf("\n\n-----Details deleted-----\n\n");
+                fclose(fp);
+                
+                printf("\n\n-----Details Deleted-----\n\n");
                 break;
             }
-            else if(i == Total_std-1){
+            else if (i == Total_std - 1) {
                 printf("\n\n--------Student Not Found--------\n");
             }
         }
+        
         sort_data_f_name(S);
-        printf("\n\nDo you want to Delete detail of another student? (y/n): ");
-        getchar();
+        printf("\n\nDo you want to delete details of another student? (y/n): ");
+        getchar(); // Clear buffer
     }
-    while(tolower(getchar())=='y');
+    while (tolower(getchar()) == 'y');
+    
     send_stdNum();
-    fclose(fp);
 }
+
 
 
 
