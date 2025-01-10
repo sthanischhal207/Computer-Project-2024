@@ -1,347 +1,460 @@
 BA XYZ 5763
-25	25
+25
+25
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Chitwan   	Biratnagar
-12:15 AM	900
-
+Chitwan
+Biratnagar
+12:15 AM
+900
 BA JKL 5731
 33	33
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Kathmandu   	Dharan
-02:00 AM	1400
-
+Kathmandu
+Dharan
+02:00 AM
+1400
 BA ABC 6789
-33	33
+33
+33
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Chitwan   	Pokhara
-03:00 AM	1800
-
+Chitwan
+Pokhara
+03:00 AM
+1800
 PT YZA 6473
-25	25
+25
+25
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Biratnagar   	Chitwan
-04:30 AM	1400
-
+Biratnagar
+Chitwan
+04:30 AM
+1400
 PT GHJ 9456
-21	21
+21
+21
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Pokhara   	Dharan
-05:00 AM	1050
-
+Pokhara
+Dharan
+05:00 AM
+1050
 BA HIJ 8417
-33	33
+33
+33
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Dharan   	Biratnagar
-05:00 AM	1600
-
+Dharan
+Biratnagar
+05:00 AM
+1600
 PT KLM 7284
 33	33
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Pokhara   	Dharan
-05:00 AM	1600
-
+Pokhara
+Dharan
+05:00 AM
+1600
 BA DEF 3846
-37	37
+37
+37
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Pokhara   	Biratnagar
-05:15 AM	850
-
+Pokhara
+Biratnagar
+05:15 AM
+850
 PT UVW 3942
-25	25
+25
+25
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Chitwan   	Lumbini
-05:15 AM	950
-
+Chitwan
+Lumbini
+05:15 AM
+950
 BA DEF 3846
-37	37
+37
+37
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Pokhara   	Biratnagar
-05:15 AM	850
-
+Pokhara
+Biratnagar
+05:15 AM
+850
 PT QRS 1847
-25	25
+25
+25
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Chitwan   	Lumbini
-05:45 AM	900
-
+Chitwan
+Lumbini
+05:45 AM
+900
 PT KJL 4178
-29	29
+29
+29
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Chitwan   	Dharan
-06:30 AM	1050
-
+Chitwan
+Dharan
+06:30 AM
+1050
 BA PQR 4859
-17	17
+17
+17
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Dharan   	Biratnagar
-07:00 AM	1200
-
+Dharan
+Biratnagar
+07:00 AM
+1200
 BA BCD 1276
 37	37
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Dharan   	Lumbini
-07:15 AM	1300
-
+Dharan
+Lumbini
+07:15 AM
+1300
 BA DEF 3926
-41	41
+41
+41
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Lumbini   	Kathmandu
-07:30 AM	1500
-
+Lumbini
+Kathmandu
+07:30 AM
+1500
 BA GHT 9103
-29	29
+29
+29
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Biratnagar   	Kathmandu
-08:45 AM	1600
-
+Biratnagar
+Kathmandu
+08:45 AM
+1600
 BA TUV 3957
-33	33
+33
+33
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Lumbini   	Dharan
-08:45 AM	1500
-
+Lumbini
+Dharan
+08:45 AM
+1500
 PT MNO 7468
-29	29
+29
+29
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Chitwan   	Lumbini
-08:45 AM	1200
-
+Chitwan
+Lumbini
+08:45 AM
+1200
 PT GHI 8475
-25	25
+25
+25
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Kathmandu   	Pokhara
-09:15 AM	1150
-
+Kathmandu
+Pokhara
+09:15 AM
+1150
 BA VWX 7493
-33	33
+33
+33
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Pokhara   	Lumbini
-09:15 AM	1300
-
+Pokhara
+Lumbini
+09:15 AM
+1300
 PT QRS 8165
-21	21
+21
+21
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Biratnagar   	Chitwan
-09:30 AM	1200
-
+Biratnagar
+Chitwan
+09:30 AM
+1200
 PT UVW 4851
-37	37
+37
+37
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Kathmandu   	Dharan
-09:30 AM	1500
-
+Kathmandu
+Dharan
+09:30 AM
+1500
 PT QRS 8165
-21	21
+21
+21
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Biratnagar   	Chitwan
-09:30 AM	1200
-
+Biratnagar
+Chitwan
+09:30 AM
+1200
 PT KLM 3851
-33	33
+33
+33
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Lumbini   	Dharan
-10:30 AM	1200
-
+Lumbini
+Dharan
+10:30 AM
+1200
 BA NOP 4861
-29	29
+29
+29
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Pokhara   	Chitwan
-10:45 AM	900
-
+Pokhara
+Chitwan
+10:45 AM
+900
 BA VWX 3649
-41	41
+41
+41
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Kathmandu   	Chitwan
-11:00 AM	1300
-
+Kathmandu
+Chitwan
+11:00 AM
+1300
 BA JKL 9673
-25	25
+25
+25
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Lumbini   	Pokhara
-11:00 AM	1600
-
+Lumbini
+Pokhara
+11:00 AM
+1600
 PT DEF 4321
-25	25
+25
+25
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Lumbini   	Chitwan
-11:15 AM	1550
-
+Lumbini
+Chitwan
+11:15 AM
+1550
 PT EFG 5192
-17	17
+17
+17
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Biratnagar   	Pokhara
-11:45 AM	900
-
+Biratnagar
+Pokhara
+11:45 AM
+900
 BA LMN 5623
-33	33
+33
+33
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Biratnagar   	Lumbini
-12:45 PM	900
-
+Biratnagar
+Lumbini
+12:45 PM
+900
 BA HIJ 6248
-37	37
+37
+37
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Chitwan   	Biratnagar
-01:00 PM	1850
-
+Chitwan
+Biratnagar
+01:00 PM
+1850
 PT STU 1758
-29	29
+29
+29
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Pokhara   	Lumbini
-01:15 PM	1400
-
+Pokhara
+Lumbini
+01:15 PM
+1400
 PT STU 1628
-21	21
+21
+21
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Kathmandu   	Biratnagar
-01:30 PM	1000
-
+Kathmandu
+Biratnagar
+01:30 PM
+1000
 BA OPQ 1953
-29	29
+29
+29
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Pokhara   	Kathmandu
-02:00 PM	1350
-
+Pokhara
+Kathmandu
+02:00 PM
+1350
 PT KLM 5748
-29	29
+29
+29
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Kathmandu   	Lumbini
-02:30 PM	1200
-
+Kathmandu
+Lumbini
+02:30 PM
+1200
 BA XYZ 5628
-21	21
+21
+21
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Biratnagar   	Lumbini
-02:45 PM	950
-
+Biratnagar
+Lumbini
+02:45 PM
+950
 PT UVW 2846
-37	37
+37
+37
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Kathmandu   	Pokhara
-03:00 PM	1450
-
+Kathmandu
+Pokhara
+03:00 PM
+1450
 BA UVW 3647
 37	37
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Lumbini   	Chitwan
-03:30 PM	1700
-
+Lumbini
+Chitwan
+03:30 PM
+1700
 PT GHI 1846
-33	33
+33
+33
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Chitwan   	Kathmandu
-03:30 PM	1500
-
+Chitwan
+Kathmandu
+03:30 PM
+1500
 PT ABC 4836
-29	29
+29
+29
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Dharan   	Pokhara
-04:00 PM	1100
-
+Dharan
+Pokhara
+04:00 PM
+1100
 BA BCD 2691
-29	29
+29
+29
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Lumbini   	Kathmandu
-04:00 PM	1400
-
+Lumbini
+Kathmandu
+04:00 PM
+1400
 PT EFG 9472
-21	21
+21
+21
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Pokhara   	Kathmandu
-04:45 PM	750
-
+Pokhara
+Kathmandu
+04:45 PM
+750
 BA PQR 9352
-21	21
+21
+21
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Dharan   	Pokhara
-05:00 PM	900
-
+Dharan
+Pokhara
+05:00 PM
+900
 PT YZA 9531
-21	21
+21
+21
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Biratnagar   	Pokhara
-05:30 PM	1150
-
+Biratnagar
+Pokhara
+05:30 PM
+1150
 BA NOP 7482
-25	25
+25
+25
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Kathmandu   	Pokhara
-06:00 PM	1400
-
+Kathmandu
+Pokhara
+06:00 PM
+1400
 PT ABC 7192
-25	25
+25
+25
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Dharan   	Kathmandu
-06:00 PM	1300
-
+Dharan
+Kathmandu
+06:00 PM
+1300
 PT QRS 6194
-21	21
+21
+21
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Biratnagar   	Kathmandu
-06:15 PM	1150
-
+Biratnagar
+Kathmandu
+06:15 PM
+1150
 PT XYZ 7534
-17	17
+17
+17
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Dharan   	Lumbini
-06:30 PM	1450
-
+Dharan
+Lumbini
+06:30 PM
+1450
 BA HIJ 9374
-25	25
+25
+25
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Kathmandu   	Chitwan
-06:30 PM	1500
-
+Kathmandu
+Chitwan
+06:30 PM
+1500
 PT MNO 2534
-33	33
+33
+33
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Kathmandu   	Chitwan
-06:45 PM	1400
-
+Kathmandu
+Chitwan
+06:45 PM
+1400
 BA NOP 5913
-37	37
+37
+37
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Dharan   	Lumbini
-07:15 PM	1300
-
+Dharan
+Lumbini
+07:15 PM
+1300
 BA KHI 1122
-29	29
+29
+29
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Kathmandu   	Biratnagar
-07:45 PM	2000
-
+Kathmandu
+Biratnagar
+07:45 PM
+2000
 PT YZA 4183
-25	25
+25
+25
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Chitwan   	Dharan
-07:45 PM	1150
-
+Chitwan
+Dharan
+07:45 PM
+1150
 PT RST 2849
-25	25
+25
+25
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Lumbini   	Dharan
-08:00 PM	1100
-
+Lumbini
+Dharan
+08:00 PM
+1100
 PT EFG 3652
-25	25
+25
+25
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Chitwan   	Pokhara
-08:15 PM	1000
-
+Chitwan
+Pokhara
+08:15 PM
+1000
 BA VWX 9372
-37	37
+37
+37
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Kathmandu   	Dharan
-09:45 PM	1300
-
+Kathmandu
+Dharan
+09:45 PM
+1300
 PT GHI 9518
-29	29
+29
+29
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Biratnagar   	Pokhara
-10:15 PM	1300
-
+Biratnagar
+Pokhara
+10:15 PM
+1300
 BA TUV 3946
-33	33
+33
+33
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-Pokhara   	Chitwan
-11:45 PM	1700
+Pokhara
+Chitwan
+11:45 PM
+1700
