@@ -44,13 +44,14 @@ int main(){
     printf("\nEnter Your Phone Number to proceed: ");
     while(phone_no == 0){
         phone_no = get_unsignedlonglong();
-        /*int check =phone_no/pow(10,9);
+        int check =phone_no/pow(10,9);
 		if( check != 9) {
 			printf("-------------Phone Number Must Contain 10 digits and Start with 9-------------\n\nPhone Number: ");
 			phone_no = 0;
-		}*/
+		}
     }
     int generated_login_code;
+    int chance = 0;
 	re:
 	generated_login_code = generate_number(4);             //generates 4 digit login code
 	printf("\n\nLOGIN CODE HAS BEEN SENT TO YOU, IN PHONE NUMBER: %llu",phone_no);
@@ -67,6 +68,11 @@ int main(){
 		home_page();
 	}
 	else {
+	    chance++;
+	    if(chance>5){
+	        printf("\n\n-------Invalid Code Multiple Time--------\n\n");
+	        return 0;
+	    }
 		printf("-----------Invalid Login Code-----------");
 		goto re;
 	}    
@@ -331,9 +337,12 @@ void seat(struct Bus_data *B,int n){
         printf("|   For further assistance, contact: 9876543210       |\n");
         printf("=======================================================\n");
         printf("\nNOTICE: PLEASE KEEP SCREENSHOT OF THE BILL\n");
-    
+        
     }
     else{ goto re; }
+    printf("\n\nHit Enter To Continue:");
+    getchar();
+    getchar();
     return ;
 }
 
@@ -358,7 +367,7 @@ void refund_page(struct Bus_data B[]){
     printf("\nPlease Kindly Choose Which One Would You like To Cancel:\n\n");
     for(int i=0 ; i<cnt ; i++){
         int iteration = bus_iteration[i];
-        printf("%d)  Bus ID: %s \nDeparture Time: %s \nRoute: %s to %s \nSeat Numbers: ",i+1, B[iteration].id, B[iteration].Time, B[iteration].from, B[iteration].to);
+        printf("\n\n%d)  Bus ID: %s \nDeparture Time: %s \nRoute: %s to %s \nSeat Numbers: ",i+1, B[iteration].id, B[iteration].Time, B[iteration].from, B[iteration].to);
         for(int j=0 ; j<B[iteration].T_seats ; j++){ if(B[iteration].array[j] == phone_no){printf("%d, ",j+1);} }       //printing seat numbers which are booked by user
         printf("\nPrice per Seat: %d \n",B[iteration].price);
     }
@@ -373,6 +382,7 @@ void refund_page(struct Bus_data B[]){
 		}
 	}
 	int generated_refund_code;
+	int chance = 0;
 	re:
 	printf("\nSending Refund Code in Phone No: %llu",phone_no);
 	generated_refund_code = generate_number(4);             //generates 4 digit login code
@@ -398,6 +408,11 @@ void refund_page(struct Bus_data B[]){
 		printf("\n\n%d Has been refunded to Your Account\nThank You for valuable Time, We hope for your Good Day.\n\n",B[iteration].price*seat_cnt);
 	}
 	else {
+	    chance++;
+	    if(chance>5){
+	        printf("\n\n-------Invalid Code Multiple Time--------\n\n");
+	        return ;
+	    }
 		printf("\n\n-----------Invalid Login Code-----------\n\n");
 		goto re;
 	}
@@ -429,7 +444,7 @@ void bus_status_page(struct Bus_data B[]){
     else{
         display_seats(B[choose-1]);
     }
-    printf("\nHit Enter To Continue:");
+    printf("\n\nHit Enter To Continue:");
     getchar();
     getchar();
 }
