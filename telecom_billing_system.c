@@ -3,36 +3,273 @@
 #include <string.h>		// String library for operations like strcmp, strcpy, etc.
 #include <ctype.h>		// Character type library for functions like isdigit, isspace
 #include <math.h>		// Math library for mathematical operations like pow
-#include "for_all.h"		// Custom header file with utility functions and declarations
+#include <unistd.h>     // for sleep()
+#include <pthread.h>
+#include <stdbool.h>
+#include "for_all.h"	// Custom header file with utility functions and declarations
 
-struct Data{
-    unsigned long long by;          // Who is calling i.e. user
-    unsigned long long to;          // To whome user is calling
-    char start[50];                 // Stores Time when call started or SMS was sent
-    unsigned long long duration;    // Stores Duration of the call
-    char SMS[10000];                // Stores the SMS sent by the user
-    float amount;                   // Stores the amount Charged for either Call or SMS
-    float paid                      // Stores Amount Paid by user
-}
+struct Telecom_data{
+    unsigned long long by;      // Who is calling i.e. user
+    unsigned long long to;      // To whome user is calling
+    char start[50];             // Stores Time when call started or SMS was sent
+    double duration;               // Stores Duration of the call
+    char SMS[10000];            // Stores the SMS sent by the user
+    float amount;               // Stores the amount Charged for either Call or SMS
+};
 
 
 //UDFs
+void home_page();
+void add_record(struct Telecom_data D[]);
 
-
-
+void display_time(int seconds);
+// Function to handle user input in a separate thread
+void* check_input(void* arg);
 
 //Global Variable
 int Data_cnt = 0;           // Stores the Data Count in Data Base
 float P_charge = 0.05;      // Stores Charge for Voice call per second
 float S_charge = 0.01;      // Stores Charge for SMS per Character
+unsigned long long phone_no;
+// Global flag to detect when Enter is pressed
+volatile bool stop = false;
+char Time[50];              //Stores current Time
 
 
 int main(){
-    
-    
-    
-    
+    //Connecting The Number in the database
+    printf("\n\nBefore We Start,\nEnter Your Phone Number: ");
+    phone_no = 0;
+    while(phone_no == 0){
+        phone_no = get_unsignedlonglong();
+        /*int check = phone_no/pow(10,9);            //This Checks The phone_no
+		if( check != 9) {
+			printf("-------------Phone Number Must Contain 10 digits and Start with 9-------------\n\nPhone Number: ");
+			phone_no = 0;
+		}*/
+    }
+    home_page();
     return 0;
 }
+
+
+
+void home_page(){
+    FILE *fp;
+    //Reading data from the telecom_data.dat
+    fp = fopen("telecom_data.dat", "rb");
+	if (fp == NULL) {
+		fp = fopen("telecom_data.dat", "wb");  // Creates the file if not present
+		if (fp == NULL) {
+			printf("Failed to open or create the file");
+			return ;  // Exit if file creation fails
+		}
+		fclose(fp);  // Close after creating the file
+	}
+	// Reopen the file for reading after creation
+	fp = fopen("telecom_data.dat", "rb");
+	if (fp == NULL) {
+		printf("Failed to open the file for reading");
+		return ;  // Exit if the file can't be opened for reading
+	}
+
+	// Dynamically allocate memory for human data
+    // Structure to store information about users or staff
+	struct Telecom_data *D = malloc(sizeof(struct Telecom_data));  // Start with space for 1 record
+	if (!D) {
+		printf("Memory allocation failed\n");
+		return ;
+	}
+
+    // Read data from a file and store it in the structure
+	while (fscanf(fp, "%llu \n %llu \n %s \n %lf \n %f \n %s \n",
+	                   &D[Data_cnt].by,
+	                   &D[Data_cnt].to,
+	                   D[Data_cnt].start,
+	                   &D[Data_cnt].duration,
+	                   &D[Data_cnt].amount,
+	                   D[Data_cnt].SMS) == 6)
+	{
+		Data_cnt++;
+    // Reallocate memory dynamically to adjust size
+		D = realloc(D, (Data_cnt + 1) * sizeof(struct Telecom_data));
+		if (!D) {
+			printf("Memory reallocation failed\n");
+			free(D);
+			return ;
+		}
+
+	}
+	fclose(fp);
+	
+	
+	
+    //Printing Home Page Graphics
+    re:
+    printf("\n\n\n-------------------------------------------------------\n");
+    printf("|                    TELECOM SYSTEM                   |\n");
+    printf("-------------------------------------------------------\n");
+    printf("|                                                     |\n");
+    printf("|    [1] -> Add New Records                           |\n");
+    printf("|                                                     |\n");
+    printf("|    [2] -> View All Records                          |\n");
+    printf("|                                                     |\n");
+    printf("|    [3] -> Search Records                            |\n");
+    printf("|                                                     |\n");
+    printf("|    [4] -> Payment Overview                          |\n");
+    printf("|                                                     |\n");
+    printf("|    [5] -> Initiate Payment                          |\n");
+    printf("|                                                     |\n");
+    printf("|    [6] -> Exit the System                           |\n");
+    printf("|                                                     |\n");
+    printf("-------------------------------------------------------\n");
+    printf("\nYour Choice:");
+    int choice = 0;
+	while(choice == 0 )        //This Handles ValueError
+	{
+		choice = get_integer();
+	}
+	if(choice == 1) { add_record(D); }
+	/*else if(choice == 2) { refund_page(B); }
+    else if(choice == 3){ bus_status_page(B); } 
+    else if(choice == 4){ bus_status_page(B); } 
+    else if(choice == 5){ bus_status_page(B); }*/
+	else if(choice > 6) {   
+		printf("\n--------Invalid Choice--------\n\n");
+		goto re;
+	}
+
+    // Updating Bus File Before Exiting or going to re:
+    fp = fopen("telecom_data.dat", "wb");
+    if (fp == NULL) { // Corrected condition
+        printf("Error writing file\n");
+        return;
+    }
+    
+    for (int i = 0 ; i < Data_cnt; i++) {
+        fprintf(fp, "%llu \n %llu \n %s \n %f \n %f \n %s \n",
+	                   D[i].by,
+	                   D[i].to,
+	                   D[i].start,
+	                   D[i].duration,
+	                   D[i].amount,
+	                   D[i].SMS);
+    }
+    
+    fclose(fp); // Close the file
+
+    
+    if(choice == 6) { exit(0); }
+	goto re;
+}
+
+
+void add_record(struct Telecom_data D[]){
+    re:
+    printf("\n\n\n-------------------------------------------------------\n");
+    printf("|                      ADD RECORDS                    |\n");
+    printf("-------------------------------------------------------\n");
+    printf("|                                                     |\n");
+    printf("|    [1] -> Voice Call                                |\n");
+    printf("|                                                     |\n");
+    printf("|    [2] -> Send SMS                                  |\n");
+    printf("|                                                     |\n");
+    printf("-------------------------------------------------------\n");
+    printf("\nYour Choice:");
+    int choice = 0;
+	while(choice == 0 )        //This Handles ValueError
+	{
+		choice = get_integer();
+	}
+	if(choice == 1) {
+	    
+	    printf("\n\nEnter Phone Number You want To call: ");
+        unsigned long long phone_call = 0;
+        while(phone_call == 0){
+            phone_call = get_unsignedlonglong();
+            /*int check1 = phone_call/pow(10,9);            //This Checks The phone_no
+    		if( check1 != 9) {
+    			printf("-------------Phone Number Must Contain 10 digits and Start with 9-------------\n\nPhone Number: ");
+    			phone_call = 0;
+    		}*/
+        }
+	    time_t start, end;
+        double diff;
+        int seconds = 1;  
+        printf("Press Enter to Call: ");
+        getchar();
+        getchar(); // Wait for initial Enter key
+        get_time(Time);         //Getting the Time
+	    trimWhitespace(Time);
+        time(&start); // Get the start time
+    
+        printf("Press Enter again to End Call:\n");
+    
+        // Create a thread to monitor user input
+        pthread_t input_thread;
+        pthread_create(&input_thread, NULL, check_input, NULL);
+    
+        // Main loop to display elapsed time
+        while (!stop) {
+            display_time(seconds);
+            sleep(1); // Wait for 1 second
+            seconds++;
+        }
+    
+        time(&end); // Get the end time
+        diff = difftime(end, start);
+    
+         printf("\n\nYou Have called %llu for %g seconds Costing you %g\n",phone_call,diff,diff*P_charge );
+    
+        // Join the input thread (cleanup)
+        pthread_join(input_thread, NULL);
+        
+        printf("\n\nPress Enter To Continue:");
+        getchar();
+        
+        
+        
+        D[Data_cnt].by = phone_no;
+        D[Data_cnt].to = phone_call;
+        strcpy(D[Data_cnt].start,Time);
+        D[Data_cnt].duration = diff;
+        D[Data_cnt].amount = diff*P_charge;
+        strcpy(D[Data_cnt].SMS,"");
+        
+        
+        
+        Data_cnt++;
+        // Reallocate memory dynamically to adjust size
+		D = realloc(D, (Data_cnt + 1) * sizeof(struct Telecom_data));
+		if (!D) {
+			printf("Memory reallocation failed\n");
+			free(D);
+			return ;
+		}
+        
+	}
+	//else if(choice == 2) { refund_page(B); }
+	else{   
+		printf("\n--------Invalid Choice--------\n\n");
+		goto re;
+	}
+	
+}
+
+void display_time(int seconds) {
+    int minutes = seconds / 60;
+    int secs = seconds % 60;
+    fflush(stdout); // Ensure the output is updated
+    printf("\n%02d:%02d", minutes, secs);
+}
+
+// Function to handle user input in a separate thread
+void* check_input(void* arg) {
+    getchar(); // Wait for Enter key
+    stop = true; // Set the flag to true when Enter is pressed
+    return NULL;
+}
+
+
 
 
