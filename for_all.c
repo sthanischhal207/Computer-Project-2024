@@ -10,6 +10,9 @@
  * return Integer entered bu user if user is entering integer  *
  ***************************************************************/
 
+
+// Function: get_integer
+// Returns an integer input by the user, validates it, and ensures it is non-zero
 int get_integer(){ 
     char local_choice[30];
     scanf(" %29[^\n]s", local_choice);   // space before %29[^\n]s to clear any new line // or we can use fflush(stdin);
@@ -31,6 +34,9 @@ int get_integer(){
     return num;
 }
 
+
+// Function: get_unsignedlonglong
+// Returns an unsigned long long entered by the user, validates input
 unsigned long long get_unsignedlonglong() {
 	char local_choice[50];
 	scanf(" %49[^\n]s", local_choice);   // space before %49[^\n]s to clear any new line // or we can use fflush(stdin);
@@ -54,6 +60,9 @@ unsigned long long get_unsignedlonglong() {
 }
 
 
+
+// Function: generate_number
+// Generates a random number with 'n' digits, used for creating IDs
 int generate_number(int n) {
     int number = 0;
     // Ensure n is a positive integer
@@ -71,6 +80,9 @@ int generate_number(int n) {
 
 
 
+
+// Function: trimWhitespace
+// Removes leading and trailing whitespaces from a given string
 void trimWhitespace(char *str) {
 	int start = 0;
 	int end = 0;
@@ -100,6 +112,9 @@ void trimWhitespace(char *str) {
 	str[i] = '\0';  // Null-terminate the string
 }
 
+
+// Function: get_time
+// Fetches the current date and time, stores it in the provided string
 void get_time(char *t)
 {
 	// Get the current time
@@ -136,6 +151,9 @@ int cnt_digits(int num)
 	return cnt;
 }
 
+
+// Function: print_space
+// Prints 'n' spaces for formatting purposes
 void print_space(int n)
 {
 	for(int i=0; i<n ; i++)
@@ -143,4 +161,3 @@ void print_space(int n)
 		printf(" ");
 	}
 }
-
