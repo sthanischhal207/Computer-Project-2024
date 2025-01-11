@@ -1,77 +1,90 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <math.h>
-#include "for_all.h"
+#include <stdio.h>		// Standard I/O library for basic input and output operations
+#include <stdlib.h>		// Standard library for dynamic memory allocation and utility functions
+#include <string.h>		// String library for operations like strcmp, strcpy, etc.
+#include <ctype.h>		// Character type library for functions like isdigit, isspace
+#include <math.h>		// Math library for mathematical operations like pow
+#include "for_all.h"		// Custom header file with utility functions and declarations
 
-//Global Structure
+/* Structure definition for student records
+ * Contains basic student information like name, roll number, class details
+ */
 struct Students{
-    char f_name[20];
-    char l_name[20];
-    int roll_no;
-    int class;
-    char section[5];
-    char course[30];
+    char f_name[20];        // First name of student
+    char l_name[20];        // Last name of student
+    int roll_no;            // Roll number
+    int class;              // Class/grade of student
+    char section[5];        // Section identifier
+    char course[30];        // Course name
 };
 
-//Global FILE Pointer
+// Global file pointer for file operations
 FILE *fp;
 
-//Primary UDF
-void add_details();
-void view_stored_data();
-void edit_details();
-void delete_details();
-void find_details();
+/* Primary Function Declarations
+ * Core functionalities of the school management system
+ */
+void add_details();         // Add new student records
+void view_stored_data();    // Display all stored student records
+void edit_details();        // Modify existing student records
+void delete_details();      // Remove student records
+void find_details();        // Search for specific student records
 
-//Secondary UDF
-void print_in_table(struct Students S[] , int num ,char sn);      // prints detail of students in a table
-void table_head();
-int if_no_data();                // Useful for checking if data is present in file or not
-void send_stdNum();              //Updates num of students in file
-void sort_data_f_name(struct Students S[]);     //Sort s data in file based on first name
+/* Secondary Function Declarations
+ * Support functions for data manipulation and display
+ */
+void print_in_table(struct Students S[] , int num ,char sn);      // Prints student details in tabular format
+void table_head();                                                // Prints table headers
+int if_no_data();                                                // Checks if data exists in file
+void send_stdNum();                                              // Updates total number of students in file
+void sort_data_f_name(struct Students S[]);                      // Sorts student data by first name
 
-//Global Variables
-static int Total_std = 0;         //Stores Number of students in No_std.txt file
-static int std = 0;               //stores Number of students added just now
+// Global Variables
+static int Total_std = 0;   // Tracks total number of students in database
+static int std = 0;         // Tracks number of students being added in current session
 
+/* Main function
+ * Provides menu-driven interface for school management system
+ */
 int main(){
     while(1){
         printf("\n\t-------------WELCOME TO SCHOOL MANAGEMENT SYSYTEM-------------\n\nHOME PAGE\n");
         Total_std = 0;
-        //Getting Total Number of Students from file, If no data is stored nthg is scaned hence total std remains 0
+        
+        // Initialize/open file for storing number of students
         fp = fopen("std_number.dat","rb");
         if (fp == NULL) {
-    		fp = fopen("std_number.dat", "wb");  // Creates the file if not present
+    		fp = fopen("std_number.dat", "wb");  // Creates file if not present
     		if (fp == NULL) {
     			printf("Failed to open or create the file");
-    			return 1;  // Exit if file creation fails
+    			return 1;
     		}
-    		fclose(fp);  // Close after creating the file
+    		fclose(fp);
     	}
-    	// Reopen the file for reading after creation
+    	
+    	// Read total number of students from file
     	fp = fopen("std_number.dat", "rb");
     	    fscanf(fp,"%d",&Total_std);
     	fclose(fp);
+
+        // If students exist, load their data and sort by first name
         if(Total_std != 0){
             struct Students S[Total_std];
             fp = fopen("std_details.dat","rb");
             if (fp == NULL) {
-    		fp = fopen("std_details.dat", "wb");  // Creates the file if not present
+    		fp = fopen("std_details.dat", "wb");
     		if (fp == NULL) {
     			printf("Failed to open or create the file");
-    			return 1;  // Exit if file creation fails
+    			return 1;
     		}
-    		fclose(fp);  // Close after creating the file
+    		fclose(fp);
         	}
-        	// Reopen the file for reading after creation
         	fp = fopen("std_details.dat", "rb");
-            // Read the structure from the file
             fread(&S, sizeof(struct Students), Total_std, fp);
             fclose(fp);
-            sort_data_f_name(S); //Sorting files at the beginning of program
+            sort_data_f_name(S);
         }
+
+        // Check if data exists and handle menu options
         int IfNoData = if_no_data();
         if(IfNoData == 0){
         printf("\nChoose:\n1) Add Student Details\n2) View Stored Data of Students \n3) Edit Student Details \n4) Delete Student Data\n5) Find Student\n6) Exit\n\nYour choice: ");    
@@ -87,7 +100,7 @@ int main(){
             else if(choice == 6){   exit(0);            }
             else{
                 printf("\n\n--------Invalid Choice--------\n");
-                continue;       //Skips the Breaking below, Hence Continuing the Loop
+                continue;
             }
         }
         else if(IfNoData == 1){
@@ -102,22 +115,21 @@ int main(){
             break;
         }
     }
-    send_stdNum();  //Send the number of students to the server
+    send_stdNum();
     return 0;
-
 }
 
-
-
-//Primary Function are coded below
-
+/* Function to add new student details
+ * Allows adding multiple students in one session
+ * Stores data in binary file and updates total count
+ */
 void add_details()
 {
     do{
         std = 0;
         while(std == 0){
             printf("\n\nEnter the number of Students, You want to add details of: ");
-            std = get_integer();      //Returned Value is 0 unless integer is given
+            std = get_integer();
         }
         struct Students S[std];
         printf("\nEnter Details Of Students:\n");
@@ -129,12 +141,12 @@ void add_details()
             printf("Last Name: ");
             scanf(" %20[^\n]s", S[i].l_name);
             S[i].roll_no = 0;
-            while(S[i].roll_no == 0) {       //This Handles ValueError
+            while(S[i].roll_no == 0) {
                 printf("Roll Number: ");
                 S[i].roll_no = get_integer();
             }
             S[i].class = 0;
-            while(S[i].class == 0){      //This Handles ValueError
+            while(S[i].class == 0){
                 printf("Class: ");
                 S[i].class = get_integer();
             }
@@ -156,17 +168,18 @@ void add_details()
         fclose(fp);
         printf("\n\nStored Data Of Students:\n");
         Total_std += std;
-        send_stdNum();       //Update Number of std to file
+        send_stdNum();
         table_head();
         print_in_table(S, std,'y');
         printf("\n\nDo you want to add details of more students? (y/n): ");
         getchar();
     }
     while(tolower(getchar())=='y');
-
 }
 
-
+/* Function to display all stored student records
+ * Reads data from file and displays in tabular format
+ */
 void view_stored_data()
 {
     struct Students S[Total_std];
@@ -175,14 +188,16 @@ void view_stored_data()
         printf("\nError opening file!\nError");
         exit(1);
     }
-    // Read the structure from the file
     fread(&S, sizeof(struct Students), Total_std, fp);
     fclose(fp);
     table_head();
     print_in_table(S,Total_std,'y');
 }
 
-
+/* Function to edit existing student records
+ * Allows modification of all fields for a specific student
+ * Identifies student by first name and roll number
+ */
 void edit_details()
 {
     struct Students S[Total_std];
@@ -191,7 +206,6 @@ void edit_details()
         printf("\nError opening file!\n Make sure you have created std_number.dat and std_details.dat in the same folder.\n");
         exit(1);
     }
-    // Read the structure from the file
     fread(S, sizeof(struct Students), Total_std, fp);
     fclose(fp);
 
@@ -203,7 +217,7 @@ void edit_details()
         
         char f_name[20];
         printf("\nEnter First Name of student you want to edit: ");
-        getchar(); // Clear buffer
+        getchar();
         scanf("%20[^\n]s", f_name);
         
         int roll_no = 0;
@@ -262,13 +276,15 @@ void edit_details()
         
         sort_data_f_name(S);
         printf("\n\nDo you want to edit another student? (y/n): ");
-        getchar(); // Clear buffer
+        getchar();
     }
     while (tolower(getchar()) == 'y');
 }
 
-
-
+/* Function to delete student records
+ * Removes specific student data and updates file
+ * Identifies student by first name and roll number
+ */
 void delete_details()
 {
     struct Students S[Total_std];
@@ -277,7 +293,6 @@ void delete_details()
         printf("\nError opening file!\n Make sure you have created std_number.dat and std_details.dat in the same folder.\n");
         exit(1);
     }
-    // Read the structure from the file
     fread(S, sizeof(struct Students), Total_std, fp);
     fclose(fp);
 
@@ -294,7 +309,7 @@ void delete_details()
         
         char f_name[20];
         printf("\nEnter First Name of student you want to delete: ");
-        getchar(); // Clear buffer
+        getchar();
         scanf(" %20[^\n]s", f_name);
         trimWhitespace(f_name);
         
@@ -331,16 +346,22 @@ void delete_details()
         
         sort_data_f_name(S);
         printf("\n\nDo you want to delete details of another student? (y/n): ");
-        getchar(); // Clear buffer
+        getchar();
     }
     while (tolower(getchar()) == 'y');
     
     send_stdNum();
 }
 
-
-
-
+/* Function to search for student records
+ * Allows searching by multiple criteria:
+ * - First Name
+ * - Last Name
+ * - Roll Number
+ * - Class
+ * - Section
+ * - Course
+ */
 void find_details()
 {
     struct Students S[Total_std];
@@ -349,7 +370,6 @@ void find_details()
         printf("\nError opening file!\n Make Sure you have created std_number.dat  and std_details.dat in the same Folder.\n");
         exit(1);
     }
-    // Read the structure from the file
     fread(&S, sizeof(struct Students), Total_std, fp);
     fclose(fp);
 
@@ -401,7 +421,7 @@ void find_details()
             }
             else if(choice == 3){
                 int roll_no = 0;
-                while(roll_no == 0){        //This Handles ValueError
+                while(roll_no == 0){        // Input validation loop
                     printf("\nEnter Roll Number of std you want to Find: ");
                     roll_no = get_integer();
                 }
@@ -422,7 +442,7 @@ void find_details()
             }
             else if(choice == 4){
                 int class = 0;
-                while(class == 0){        //This Handles ValueError
+                while(class == 0){        // Input validation loop
                     printf("\nEnter Class of Students you want to Find: ");
                     class = get_integer();
                 }
@@ -486,7 +506,7 @@ void find_details()
             }
             else{
                 printf("\n\n--------Invalid Choice--------\n");
-                continue;       //Skips the Breaking below, Hence Continuing the Loop
+                continue;       // Skip to next iteration if invalid choice
             }
             printf("\nDo You want to find another student? (y/n): ");
             getchar();
@@ -497,7 +517,14 @@ void find_details()
     }
 }
 
-//Secondary Functions are coded Below
+/* Secondary Functions
+ * These functions provide support for the primary operations
+ */
+
+/* Function to sort student data by first name
+ * Uses bubble sort algorithm
+ * Updates the sorted data in the file
+ */
 void sort_data_f_name(struct Students S[]){
     int i,j;
     struct Students temp;
@@ -519,6 +546,9 @@ void sort_data_f_name(struct Students S[]){
     fclose(fp);
 }
 
+/* Function to print table headers
+ * Displays column names for student data table
+ */
 void table_head(){
     printf("\nSN");
     print_space(4);
@@ -535,9 +565,15 @@ void table_head(){
     printf("Course\n");
 }
 
+/* Function to print student data in tabular format
+ * Parameters:
+ * S[] - Array of student structures
+ * num - Number of students to print
+ * sn - Flag to determine if serial number should be printed ('y'/'n')
+ */
 void print_in_table(struct Students S[], int num, char sn){
     for(int i=0 ; i<num ; i++){
-        if(sn == 'y'){   //Added to fix SN display while finding students
+        if(sn == 'y'){   // Print serial number if flag is 'y'
             printf("%d",i+1);
             print_space(6-cnt_digits(i+1));
         }
@@ -553,11 +589,16 @@ void print_in_table(struct Students S[], int num, char sn){
         print_space(10-strlen(S[i].section));
         printf("%s", S[i].course);
         printf("\n");
-
     }
 }
 
-int if_no_data(){    //returns 1 if no data is present in the file else 0
+/* Function to check if data exists in the file
+ * Returns:
+ * 1 - No data exists and user wants to add data
+ * 0 - Data exists
+ * Exits program if no data and user doesn't want to add
+ */
+int if_no_data(){
     if(Total_std == 0){
         printf("\nNo Data Are Stored.\nDo you Want to add data?(y/n)");
         getchar();
@@ -571,8 +612,10 @@ int if_no_data(){    //returns 1 if no data is present in the file else 0
     return 0;
 }
 
+/* Function to update the total number of students in file
+ * Writes current Total_std value to std_number.dat
+ */
 void send_stdNum(){
-    //Sending Total no of std to std_number.dat
     fp = fopen("std_number.dat","wb");
     if(fp == NULL) {
         printf("\nError opening file!\n Make Sure you have created std_number.dat  and std_details.dat in the same Folder.\n");
