@@ -375,6 +375,7 @@ void initiate_payment(struct Telecom_data D[]){
             sum += D[i].amount;
         }
     }
+    if(sum = 0){return;}
     printf("\n\n\n-------------------------------------------------------\n");
     printf("|                    TELECOM SYSTEM                   |\n");
     printf("-------------------------------------------------------\n");
@@ -396,15 +397,17 @@ void initiate_payment(struct Telecom_data D[]){
     printf("-------------------------------------------------------\n");
 
     for(int i=0 ; i<Data_cnt ; i++){
-    	//When Amount paid is less than required payment
-    	if(Amount_paid - D[i].amount < 0){    
-    		D[i].amount -= Amount_paid;
-    		break;
-    	}
-    	else{
-    		Amount_paid -= D[i].amount;
-    		D[i].amount = 0;
-    	}
+        if(D[i].by == phone_no){
+        	//When Amount paid is less than required payment
+        	if(Amount_paid - D[i].amount < 0){    
+        		D[i].amount -= Amount_paid;
+        		break;
+        	}
+        	else{
+        		Amount_paid -= D[i].amount;
+        		D[i].amount = 0;
+        	}
+        }
     }
 }
 
