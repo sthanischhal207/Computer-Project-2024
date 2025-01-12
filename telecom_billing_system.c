@@ -54,58 +54,60 @@ int main(){
 
 
 
-void home_page(){
+void home_page() {
     FILE *fp;
-    //Reading data from the telecom_data.dat
+
+    // Reading data from the file
     fp = fopen("telecom_data.dat", "rb");
-	if (fp == NULL) {
-		fp = fopen("telecom_data.dat", "wb");  // Creates the file if not present
-		if (fp == NULL) {
-			printf("Failed to open or create the file");
-			return ;  // Exit if file creation fails
-		}
-		fclose(fp);  // Close after creating the file
-	}
-	// Reopen the file for reading after creation
-	fp = fopen("telecom_data.dat", "rb");
-	if (fp == NULL) {
-		printf("Failed to open the file for reading");
-		return ;  // Exit if the file can't be opened for reading
-	}
+    if (fp == NULL) {
+        // Create the file if not present
+        fp = fopen("telecom_data.dat", "wb");
+        if (fp == NULL) {
+            printf("Failed to open or create the file\n");
+            return;
+        }
+        fclose(fp);
+    } else {
+        fclose(fp);
+    }
 
-	// Dynamically allocate memory for human data
-    // Structure to store information about users or staff
-	struct Telecom_data *D = malloc(sizeof(struct Telecom_data));  // Start with space for 1 record
-	if (!D) {
-		printf("Memory allocation failed\n");
-		return ;
-	}
+    // Reopen the file for reading
+    fp = fopen("telecom_data.dat", "rb");
+    if (fp == NULL) {
+        printf("Failed to open the file for reading\n");
+        return;
+    }
+    
+    struct Telecom_data *D = malloc(sizeof(struct Telecom_data)); // Dynamic memory allocation
+    if (!D) {
+        printf("Memory allocation failed\n");
+        fclose(fp);
+        return;
+    }
+    // Read data from the file using fread
+    while (fread(&D[Data_cnt], sizeof(struct Telecom_data), 1, fp)) {
+        Data_cnt++;
+        D = realloc(D, (Data_cnt + 1) * sizeof(struct Telecom_data));
+        if (!D) {
+            printf("Memory reallocation failed\n");
+            fclose(fp);
+            return;
+        }
+    }
+    fclose(fp);
+    
+re:
+    for (int i = 0 ; i < Data_cnt; i++) {
+        printf("%llu \n %llu \n %s \n %f \n %f \n %s \n",
+	                   D[i].by,
+	                   D[i].to,
+	                   D[i].start,
+	                   D[i].duration,
+	                   D[i].amount,
+	                   D[i].SMS);
+    }
 
-    // Read data from a file and store it in the structure
-	while (fscanf(fp, "%llu \n %llu \n %s \n %lf \n %f \n %s \n",
-	                   &D[Data_cnt].by,
-	                   &D[Data_cnt].to,
-	                   D[Data_cnt].start,
-	                   &D[Data_cnt].duration,
-	                   &D[Data_cnt].amount,
-	                   D[Data_cnt].SMS) == 6)
-	{
-		Data_cnt++;
-    // Reallocate memory dynamically to adjust size
-		D = realloc(D, (Data_cnt + 1) * sizeof(struct Telecom_data));
-		if (!D) {
-			printf("Memory reallocation failed\n");
-			free(D);
-			return ;
-		}
-
-	}
-	fclose(fp);
-	
-	
-	
-    //Printing Home Page Graphics
-    re:
+    // Home Page Graphics
     printf("\n\n\n-------------------------------------------------------\n");
     printf("|                    TELECOM SYSTEM                   |\n");
     printf("-------------------------------------------------------\n");
@@ -123,45 +125,41 @@ void home_page(){
     printf("|    [6] -> Exit the System                           |\n");
     printf("|                                                     |\n");
     printf("-------------------------------------------------------\n");
-    printf("\nYour Choice:");
+    printf("\nYour Choice: ");
     int choice = 0;
-	while(choice == 0 )        //This Handles ValueError
-	{
-		choice = get_integer();
-	}
-	if(choice == 1) { add_record(D); }
-	/*else if(choice == 2) { refund_page(B); }
-    else if(choice == 3){ bus_status_page(B); } 
-    else if(choice == 4){ bus_status_page(B); } 
-    else if(choice == 5){ bus_status_page(B); }*/
-	else if(choice > 6) {   
-		printf("\n--------Invalid Choice--------\n\n");
-		goto re;
-	}
 
-    // Updating Bus File Before Exiting or going to re:
+    while (choice == 0) { // Handles invalid input
+        choice = get_integer();
+    }
+
+    if (choice == 1) {
+        add_record(D);
+    }
+    else if (choice > 6) {
+        printf("\n--------Invalid Choice--------\n\n");
+        goto re;
+    }
+
+    // Updating the file before exiting or going to re:
     fp = fopen("telecom_data.dat", "wb");
-    if (fp == NULL) { // Corrected condition
+    if (fp == NULL) {
         printf("Error writing file\n");
+        free(D);
         return;
     }
-    
-    for (int i = 0 ; i < Data_cnt; i++) {
-        fprintf(fp, "%llu \n %llu \n %s \n %f \n %f \n %s \n",
-	                   D[i].by,
-	                   D[i].to,
-	                   D[i].start,
-	                   D[i].duration,
-	                   D[i].amount,
-	                   D[i].SMS);
-    }
-    
-    fclose(fp); // Close the file
 
-    
-    if(choice == 6) { exit(0); }
-	goto re;
+    for (int i = 0; i < Data_cnt; i++) {
+        fwrite(&D[i], sizeof(struct Telecom_data), 1, fp);
+    }
+    fclose(fp);
+
+    if (choice == 6) {
+        exit(0);
+    }
+    goto re;
 }
+
+
 
 
 void add_record(struct Telecom_data D[]){
@@ -227,8 +225,6 @@ void add_record(struct Telecom_data D[]){
         printf("\n\nPress Enter To Continue:");
         getchar();
         
-        
-        
         D[Data_cnt].by = phone_no;
         D[Data_cnt].to = phone_call;
         strcpy(D[Data_cnt].start,Time);
@@ -236,22 +232,44 @@ void add_record(struct Telecom_data D[]){
         D[Data_cnt].amount = diff*P_charge;
         strcpy(D[Data_cnt].SMS,"");
         
-        
-        
-        Data_cnt++;
-        // Reallocate memory dynamically to adjust size
-		D = realloc(D, (Data_cnt + 1) * sizeof(struct Telecom_data));
-		if (!D) {
-			printf("Memory reallocation failed\n");
-			free(D);
-			return ;
-		}
-        
 	}
-	//else if(choice == 2) { refund_page(B); }
+	else if(choice == 2) {
+	    printf("\n\nEnter Phone Number You want To call: ");
+        unsigned long long phone_call = 0;
+        while(phone_call == 0){
+            phone_call = get_unsignedlonglong();
+            /*int check1 = phone_call/pow(10,9);            //This Checks The phone_no
+    		if( check1 != 9) {
+    			printf("-------------Phone Number Must Contain 10 digits and Start with 9-------------\n\nPhone Number: ");
+    			phone_call = 0;
+    		}*/
+        }
+        char SMS[10000];
+        printf("Enter the Message: ");
+        scanf(" %[^\n]s",SMS);
+        
+        get_time(Time);         //Getting the Time
+	    trimWhitespace(Time);
+        
+        D[Data_cnt].by = phone_no;
+        D[Data_cnt].to = phone_call;
+        strcpy(D[Data_cnt].start,Time);
+        D[Data_cnt].duration = 0;
+        D[Data_cnt].amount = strlen(SMS)*S_charge;
+        strcpy(D[Data_cnt].SMS,SMS);
+	    
+	}
 	else{   
 		printf("\n--------Invalid Choice--------\n\n");
 		goto re;
+	}
+	Data_cnt++;
+    // Reallocate memory dynamically to adjust size
+	D = realloc(D, (Data_cnt + 1) * sizeof(struct Telecom_data));
+	if (!D) {
+		printf("Memory reallocation failed\n");
+		free(D);
+		return ;
 	}
 	
 }
@@ -259,7 +277,6 @@ void add_record(struct Telecom_data D[]){
 void display_time(int seconds) {
     int minutes = seconds / 60;
     int secs = seconds % 60;
-    fflush(stdout); // Ensure the output is updated
     printf("\n%02d:%02d", minutes, secs);
 }
 
@@ -269,7 +286,6 @@ void* check_input(void* arg) {
     stop = true; // Set the flag to true when Enter is pressed
     return NULL;
 }
-
 
 
 
