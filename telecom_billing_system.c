@@ -34,8 +34,8 @@ void display_data(int n1, int n2,struct Telecom_data D);
 
 //Global Variable
 int Data_cnt = 0;           // Stores the Data Count in Data Base
-float P_charge = 0.05;      // Stores Charge for Voice call per second
-float S_charge = 0.01;      // Stores Charge for SMS per Character
+float P_charge = 10;      // Stores Charge for Voice call per second
+float S_charge = 20;      // Stores Charge for SMS per Character
 unsigned long long phone_no;
 // Global flag to detect when Enter is pressed
 volatile bool stop = false;
@@ -103,7 +103,7 @@ void home_page() {
     fclose(fp);
     
 re:
-    for (int i = 0 ; i < Data_cnt; i++) {
+    /*for (int i = 0 ; i < Data_cnt; i++) {
         printf("%llu \n %llu \n %s \n %f \n %f \n %s \n",
 	                   D[i].by,
 	                   D[i].to,
@@ -112,7 +112,7 @@ re:
 	                   D[i].amount,
 	                   D[i].SMS);
     }
-    
+    */
     // Home Page Graphics
     printf("\n\n\n-------------------------------------------------------\n");
     printf("|                    TELECOM SYSTEM                   |\n");
@@ -375,7 +375,7 @@ void initiate_payment(struct Telecom_data D[]){
             sum += D[i].amount;
         }
     }
-    if(sum = 0){return;}
+    if(sum == 0){return;}
     printf("\n\n\n-------------------------------------------------------\n");
     printf("|                    TELECOM SYSTEM                   |\n");
     printf("-------------------------------------------------------\n");
@@ -387,7 +387,8 @@ void initiate_payment(struct Telecom_data D[]){
     float Amount_paid;
     scanf(" %f",&Amount_paid);             //Value Error might occour incase of input string
     if(Amount_paid > sum || Amount_paid<0){
-        printf("-------Amount Must be less or equal to %g",sum);
+        printf("---------Amount Must be less or equal to %g---------\n",sum);
+        goto if_more_pay;
     }
     printf("|                                                     |\n");
     printf("-------------------------------------------------------\n");
