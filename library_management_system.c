@@ -87,6 +87,8 @@ int main()
 	}
 	fclose(fp);
 	
+	
+	
 	printf("============================================================================================================");
 	printf("\n\n");
 	print_space(13);                //prints space UDF in for_all.c
@@ -99,7 +101,8 @@ int main()
 	printf("\n\nDate: %.10s\nTime: %s\n",Time,Time + 11);            //Displays Date and Time of that day
 
 re:                 //return to this using goto if any mistake is done by user
-	printf("Please select an option to proceed:\n1) Login\n2) Sign Up\n3) Exit\n\nYour Choice:");
+
+	printf("\n\nPlease select an option to proceed:\n1) Login\n2) Sign Up\n3) Exit\n\nYour Choice:");
 	int choice = 0;
 	while(choice == 0 )        //This Handles ValueError
 	{
@@ -168,8 +171,6 @@ void login_page(struct Human_data H[]) {
 
 void signup_page(struct Human_data H[])
 {
-	Human_cnt++;
-	struct Human_data Temp;
 	int generated_id = generate_number(5);          //Generates 5 digit number between 1-9 (function from for_all.c)
 	int i;
 check_again:
@@ -180,16 +181,16 @@ check_again:
 			goto check_again;                   // Ensures that generated id is not present
 		}
 	}
-	Temp.id = generated_id;
+	H[Human_cnt].id = generated_id;
 	printf("\n\nSystem Generated Your Id as %d\n(Please kindly remember it carefully)",generated_id);
 
 	printf("\nSet Your Password: ");
-	scanf(" %[^\n]s", Temp.password);
-	trimWhitespace(Temp.password);          //removes all the white space in the beginning and end (function from for_all.c)
+	scanf(" %[^\n]s", H[Human_cnt].password);
+	trimWhitespace(H[Human_cnt].password);          //removes all the white space in the beginning and end (function from for_all.c)
     
 	printf("Enter Your Name: ");
-	scanf(" %[^\n]s", Temp.name);
-	trimWhitespace(Temp.name);          //removes all the white space in the beginning and end (function from for_all.c)
+	scanf(" %[^\n]s", H[Human_cnt].name);
+	trimWhitespace(H[Human_cnt].name);          //removes all the white space in the beginning and end (function from for_all.c)
 
 	printf("Phone Number: ");
 	unsigned long long phoneNo = 0;
@@ -201,17 +202,17 @@ check_again:
 			phoneNo = 0;
 		}
 	}
-	Temp.phone_no = phoneNo;
+	H[Human_cnt].phone_no = phoneNo;
 
-	Temp.nbook = 0;
+	H[Human_cnt].nbook = 0;
 
 	char decision;
 	printf("Are You Sure You want to Sign Up (y/n): ");
 	scanf(" %c", &decision);
 	fflush(stdin);
 
-	if(decision == 'y') { Temp.type = 'u'; }
-	else if(decision == 's') { Temp.type = 's'; }
+	if(decision == 'y') { H[Human_cnt].type = 'u'; }
+	else if(decision == 's') { H[Human_cnt].type = 's'; }
 	else { return; }
 
 	//open the file for appending
@@ -219,12 +220,21 @@ check_again:
 	if (fp == NULL) {
 		printf("Failed to open the file for appending");
 		return ;  // Exit if the file can't be opened for appending
-	}
-	fprintf(fp,"%c\t%d\t%s\t%llu\t%s\t%d\n",Temp.type, Temp.id, Temp.password, Temp.phone_no, Temp.name, Temp.nbook);
+ 	}
+ 	fprintf(fp,"%c\t%d\t%s\t%llu\t%s\t%d\n",H[Human_cnt].type, H[Human_cnt].id, H[Human_cnt].password, H[Human_cnt].phone_no, H[Human_cnt].name, H[Human_cnt].nbook);
 	printf("\n\nYour Data has been Sucessfully Added to the System Database.\nThank You For Choosing Us\n");
-	fclose(fp);
+ 	fclose(fp);
+	Human_cnt++;
+	H = realloc(H, (Human_cnt + 1) * sizeof(struct Human_data));
+	if (!H) {
+		printf("Memory reallocation failed\n");
+		free(H);
+		return ;
+	}
 	main();
 }
+
+
 
 
 
@@ -256,7 +266,7 @@ void home_page(struct Human_data H[])
 	}
 	BR_cnt = 0;
 	while (fscanf(fp, " %d %49[^\t] %d %49[^\n]",&BR[BR_cnt].book_id,BR[BR_cnt].B_T,&BR[BR_cnt].id,BR[BR_cnt].R_T) == 4) // Ensure all fields are correctly read
-	{
+	{ 
 		BR_cnt++;
 		BR = realloc(BR, (BR_cnt + 1) * sizeof(struct BR_data));
 		if (!BR) {
@@ -294,17 +304,23 @@ void home_page(struct Human_data H[])
 		return ;
 	}
 	Book_cnt = 0;
-	while (fscanf(fp, " %d  %s %s %c \n",&B[Book_cnt].book_id, B[Book_cnt].author, B[Book_cnt].name, &B[Book_cnt].status) == 4) // Ensure all fields are correctly read
-	{
-		Book_cnt++;
-		B = realloc(B, (Book_cnt + 1) * sizeof(struct Book_data));
-		if (!B) {
-			printf("Memory reallocation failed\n");
-			free(B);
-			return ;
-		}
+	while (fscanf(fp, "%d\t%99[^\t]\t%99[^\t]\t%c\n",
+                  &B[Book_cnt].book_id,
+                  B[Book_cnt].author,
+                  B[Book_cnt].name,
+                  &B[Book_cnt].status) == 4)
+    {
+        Book_cnt++;
+        struct Book_data *new_ptr = realloc(B, (Book_cnt + 1) * sizeof(struct Book_data));
+        if (!new_ptr) {
+            printf("Memory reallocation failed\n");
+            free(B);
+            fclose(fp);
+            return;
+        }
+        B = new_ptr;
+    }
 
-	}
 	fclose(fp);
 
 	//=================================================================================================================
@@ -332,6 +348,9 @@ void home_page(struct Human_data H[])
 	}
 
 re:
+	for(int i=0 ; i<Book_cnt ; i++){
+	    printf( "1 %d  %s %s %c \n",B[i].book_id,B[i].author,B[i].name,B[i].status);
+	}
 	printf("\n\nPlease select an option to proceed:\n1) Return a Book\n2) Borrow a Book\n3) Search for a Book\n");
 	//The Below code Displays Different UI For User and a Staff
 	H[Human_index].type == 'u' ? printf("4) Log Out\n\nYour Choice: ") : printf("4) Add a Book\n5) Log Out\n\nYour Choice: ");
@@ -384,9 +403,14 @@ re:
 	    printf("Error Opening File");
 	    return ;
 	}
-	for(int i=0 ; i<Book_cnt ; i++){
-	    fprintf(fp, " %d  %s %s %c \n",B[i].book_id,B[i].author,B[i].name,B[i].status);
-	}
+	for (int i = 0; i < Book_cnt; i++) {
+    fprintf(fp, "%d\t%s\t%s\t%c\n",
+                B[i].book_id,
+                B[i].author,
+                B[i].name,
+                B[i].status);
+    }
+
 	fclose(fp); 
 	goto re;           //Wont end until User LogOut
 }
@@ -411,7 +435,6 @@ void add_book(struct Human_data *H,struct Book_data B[]) {
 	int stored_id[1000];        //stored generated_id
 	for(int i=0 ; i<book_num ; i++)
 	{
-		Book_cnt++;
 		int generated_id = generate_number(7);          //Generates 7 digit number between 1-9 (function from for_all.c)
         check_again:
     		for(int j=0 ; j<Book_cnt ; j++)
@@ -430,24 +453,17 @@ void add_book(struct Human_data *H,struct Book_data B[]) {
     		}
     		stored_id[i] = generated_id;
     		temp.book_id = generated_id;
-		fprintf(fp, " %d %s %s %c \n",temp.book_id,temp.author,temp.name,temp.status);
-	}
-	fclose(fp);
-
-    //Reading book_data.dat
-	fp = fopen("book_data.dat", "rb");
-	Book_cnt = 0;
-	while (fscanf(fp, " %d  %s %s %c \n", &B[Book_cnt].book_id, B[Book_cnt].author, B[Book_cnt].name, &B[Book_cnt].status) == 4) // Ensure all fields are correctly read
-	{
+		fprintf(fp, "%d\t%s\t%s\t%c\n",temp.book_id,temp.author,temp.name,temp.status);
+		
+		B[Book_cnt] = temp;
 		Book_cnt++;
 		B = realloc(B, (Book_cnt + 1) * sizeof(struct Book_data));
-		if (!B) {
-			printf("Memory reallocation failed\n");
-			free(B);
-			return ;
-		}
 	}
 	fclose(fp);
+    
+    for(int i=0 ; i<Book_cnt ; i++){
+	    printf( "2 %d  %s %s %c \n",B[i].book_id,B[i].author,B[i].name,B[i].status);
+	}
 }
 
 void return_book(struct Human_data *H, struct Book_data B[],struct BR_data BR[])
@@ -625,9 +641,55 @@ void forgot(struct Human_data *H)
 		chance++;
 	    if(chance>5){           //Auto cancel if code is wrong more thann 5 times
 		printf("\n\n-------Invalid Code Multiple Time--------\n\n");
-		return 0;
+		return ;
 	    }
 		printf("-----------Invalid Login Code-----------");
 		goto re;
 	}
 }
+
+
+9395428	robert kiyosaki rich dad poor dad	y
+8736867	robert kiyosaki	rich dad poor dad	y
+9729769	robert kiyosaki	rich dad poor dad	y
+1211121	robert kiyosaki	rich dad poor dad	y
+6264763	robert kiyosaki	rich dad poor dad	y
+5971573	robert kiyosaki	rich dad poor dad	y
+7541688	robert kiyosaki	rich dad poor dad	y
+6252965	robert kiyosaki	rich dad poor dad	y
+2244436	robert kiyosaki	rich dad poor dad	y
+1261875	robert kiyosaki	rich dad poor dad	y
+3991145	robert kiyosaki	rich dad poor dad	y
+9235162	robert kiyosaki	rich dad poor dad	y
+7731756	robert kiyosaki	rich dad poor dad	y
+6222649	robert kiyosaki	rich dad poor dad	y
+8129299	robert kiyosaki	rich dad poor dad	y
+1762972	robert kiyosaki	rich dad poor dad	y
+2359115	robert kiyosaki	rich dad poor dad	y
+9342583	robert kiyosaki	rich dad poor dad	y
+8354258	robert kiyosaki	rich dad poor dad	y
+7932781	robert kiyosaki	rich dad poor dad	y
+1833732	robert kiyosaki	rich dad poor dad	y
+3668855	robert kiyosaki	rich dad poor dad	y
+7488299	robert kiyosaki	rich dad poor dad	y
+5244958	robert kiyosaki	rich dad poor dad	y
+8158376	robert kiyosaki	rich dad poor dad	y
+9697267	robert kiyosaki	rich dad poor dad	y
+5349577	robert kiyosaki	rich dad poor dad	y
+1629883	robert kiyosaki	rich dad poor dad	y
+8698915	robert kiyosaki	rich dad poor dad	y
+3149638	robert kiyosaki	rich dad poor dad	y
+9126664	robert kiyosaki	rich dad poor dad	y
+1516492	robert kiyosaki	rich dad poor dad	y
+2317628	robert kiyosaki	rich dad poor dad	y
+8912177	robert kiyosaki	rich dad poor dad	y
+4952546	robert kiyosaki	rich dad poor dad	y
+3658124	robert kiyosaki	rich dad poor dad	y
+8688353	robert kiyosaki	rich dad poor dad	y
+2498159	robert kiyosaki	rich dad poor dad	y
+8655517	robert kiyosaki	rich dad poor dad	y
+9257293	robert kiyosaki	rich dad poor dad	y
+
+
+u	64527	pass1234	9847690579	Nischhal	0
+s	33591	pass1234	9876543211	Ram	0
