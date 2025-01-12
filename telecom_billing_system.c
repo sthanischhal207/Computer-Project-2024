@@ -25,6 +25,9 @@ void add_record(struct Telecom_data D[]);
 void display_time(int seconds);
 // Function to handle user input in a separate thread
 void* check_input(void* arg);
+void display_headings(int n1,int n2);
+void display_data(int n1, int n2,struct Telecom_data D);
+
 
 //Global Variable
 int Data_cnt = 0;           // Stores the Data Count in Data Base
@@ -34,7 +37,7 @@ unsigned long long phone_no;
 // Global flag to detect when Enter is pressed
 volatile bool stop = false;
 char Time[50];              //Stores current Time
-
+int graphics_cnt = 0;
 
 int main(){
     //Connecting The Number in the database
@@ -135,6 +138,90 @@ re:
     if (choice == 1) {
         add_record(D);
     }
+    else if(choice == 2){
+        graphics_cnt = 0;
+        printf("\n\nVoice Call History:\n");
+        display_headings(0,0);
+        for(int i = 0 ; i<Data_cnt ; i++){
+            if(D[i].duration != 0 && D[i].by == phone_no){
+                display_data(0,0,D[i]);                
+            }
+        }
+        graphics_cnt = 0;
+        printf("\n\nSMS History:\n");
+        display_headings(1,0);
+        for(int i = 0 ; i<Data_cnt ; i++){
+            if(D[i].duration == 0 && D[i].by == phone_no){
+                display_data(1,0,D[i]);                
+            }
+        }
+        
+        printf("\n\nPress Enter To Continue:");
+        getchar();
+        getchar();
+    } 
+    else if(choice == 3){
+        printf("Enter The Number with whom You want to Search the history of: ");
+        unsigned long long phone_search = 0;
+        while(phone_search == 0){
+            phone_search = get_unsignedlonglong();
+            /*int check = phone_search/pow(10,9);            //This Checks The phone_no
+    		if( check != 9) {
+    			printf("-------------Phone Number Must Contain 10 digits and Start with 9-------------\n\nPhone Number: ");
+    			phone_search = 0;
+    		}*/
+        }
+        graphics_cnt = 0;
+        printf("\n\nVoice Call History:\n");
+        display_headings(0,0);
+        for(int i = 0 ; i<Data_cnt ; i++){
+            if(D[i].duration != 0 && D[i].by == phone_no && D[i].to == phone_search){
+                display_data(0,0,D[i]);                
+            }
+        }
+        graphics_cnt = 0;
+        printf("\n\nSMS History:\n");
+        display_headings(1,0);
+        for(int i = 0 ; i<Data_cnt ; i++){
+            if(D[i].duration == 0 && D[i].by == phone_no && D[i].to == phone_search){
+                display_data(1,0,D[i]);                
+            }
+        }
+        
+        printf("\n\nPress Enter To Continue:");
+        getchar();
+        getchar();
+    } 
+    else if(choice == 4){
+        float sum = 0;
+        graphics_cnt = 0;
+        printf("\n\nVoice Call Overview:\n");
+        display_headings(0,3);
+        for(int i = 0 ; i<Data_cnt ; i++){
+            if(D[i].duration != 0 && D[i].by == phone_no && D[i].amount != 0){
+                display_data(0,3,D[i]);  
+                sum += D[i].amount;
+            }
+        }
+        graphics_cnt = 0;
+        printf("\n\nSMS Overview:\n");
+        display_headings(1,3);
+        for(int i = 0 ; i<Data_cnt ; i++){
+            if(D[i].duration == 0 && D[i].by == phone_no && D[i].amount != 0){
+                display_data(1,3,D[i]);     
+                sum += D[i].amount;
+            }
+        } 
+        
+        printf("\n\nYour Amount to be paid will be %g",sum);
+        
+        printf("\n\nPress Enter To Continue:");
+        getchar();
+        getchar();
+    }
+    else(choice == 5){
+        
+    }
     else if (choice > 6) {
         printf("\n--------Invalid Choice--------\n\n");
         goto re;
@@ -209,6 +296,7 @@ void add_record(struct Telecom_data D[]){
     
         // Main loop to display elapsed time
         while (!stop) {
+            printf("\n");
             display_time(seconds);
             sleep(1); // Wait for 1 second
             seconds++;
@@ -217,7 +305,7 @@ void add_record(struct Telecom_data D[]){
         time(&end); // Get the end time
         diff = difftime(end, start);
     
-         printf("\n\nYou Have called %llu for %g seconds Costing you %g\n",phone_call,diff,diff*P_charge );
+         printf("\n\nYou Have called %llu for %g seconds Costing you NRs.%g\n",phone_call,diff,diff*P_charge );
     
         // Join the input thread (cleanup)
         pthread_join(input_thread, NULL);
@@ -257,7 +345,6 @@ void add_record(struct Telecom_data D[]){
         D[Data_cnt].duration = 0;
         D[Data_cnt].amount = strlen(SMS)*S_charge;
         strcpy(D[Data_cnt].SMS,SMS);
-	    
 	}
 	else{   
 		printf("\n--------Invalid Choice--------\n\n");
@@ -271,13 +358,53 @@ void add_record(struct Telecom_data D[]){
 		free(D);
 		return ;
 	}
-	
+}
+
+/*********************************************************
+ (0,0) -> SN To Time Call_Duration
+ (1,0) -> Sn To Time SMS Length
+ (0,3) -> SN To Time Call_Duration Amount
+ (1,3) -> Sn To Time SMS Length Amount
+ * ******************************************************/
+void display_headings(int n1, int n2){
+    printf("\n\n");
+    printf("SN");
+    print_space(3);
+    printf("To");
+    print_space(22);
+    printf("Time");
+    print_space(12);
+    if(n1 == 0){printf("Call Duration");}
+    else if(n1 == 1){printf("SMS Length");}
+    print_space(2);
+    if(n2 == 3){printf("Amount(NRs)");}
+}
+
+void display_data(int n1, int n2,struct Telecom_data D){
+    graphics_cnt++;
+    printf("\n%d)",graphics_cnt);
+    print_space(4-cnt_digits(graphics_cnt));
+    printf("%llu",D.to);
+    print_space(14-cnt_digits(D.to));
+    printf("%s",D.start);
+    print_space(29-strlen(D.start));
+    if(n1 == 0){
+        display_time(D.duration);
+        print_space(7);
+    }
+    else if(n1 == 1){
+        printf(" %ld",strlen(D.SMS));
+        print_space(8-cnt_digits(strlen(D.SMS)));
+    }
+    print_space(2);
+    if(n2 == 3){printf("%g",D.amount);}
+    printf("\n");
 }
 
 void display_time(int seconds) {
     int minutes = seconds / 60;
     int secs = seconds % 60;
-    printf("\n%02d:%02d", minutes, secs);
+    printf("%02d:%02d", minutes, secs);
 }
 
 // Function to handle user input in a separate thread
@@ -286,6 +413,5 @@ void* check_input(void* arg) {
     stop = true; // Set the flag to true when Enter is pressed
     return NULL;
 }
-
 
 
