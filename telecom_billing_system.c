@@ -21,10 +21,13 @@ struct Telecom_data{
 //UDFs
 void home_page();
 void add_record(struct Telecom_data D[]);
+void view_records(struct Telecom_data D[]);
+void search_record(struct Telecom_data D[]);
+void payment_overview(struct Telecom_data D[]);
+void initiate_payment(struct Telecom_data D[]);
 
 void display_time(int seconds);
-// Function to handle user input in a separate thread
-void* check_input(void* arg);
+void* check_input(void* arg);       // Function to handle user input in a separate thread
 void display_headings(int n1,int n2);
 void display_data(int n1, int n2,struct Telecom_data D);
 
@@ -109,7 +112,7 @@ re:
 	                   D[i].amount,
 	                   D[i].SMS);
     }
-
+    
     // Home Page Graphics
     printf("\n\n\n-------------------------------------------------------\n");
     printf("|                    TELECOM SYSTEM                   |\n");
@@ -135,98 +138,15 @@ re:
         choice = get_integer();
     }
 
-    if (choice == 1) {
-        add_record(D);
-    }
-    else if(choice == 2){
-        graphics_cnt = 0;
-        printf("\n\nVoice Call History:\n");
-        display_headings(0,0);
-        for(int i = 0 ; i<Data_cnt ; i++){
-            if(D[i].duration != 0 && D[i].by == phone_no){
-                display_data(0,0,D[i]);                
-            }
-        }
-        graphics_cnt = 0;
-        printf("\n\nSMS History:\n");
-        display_headings(1,0);
-        for(int i = 0 ; i<Data_cnt ; i++){
-            if(D[i].duration == 0 && D[i].by == phone_no){
-                display_data(1,0,D[i]);                
-            }
-        }
-        
-        printf("\n\nPress Enter To Continue:");
-        getchar();
-        getchar();
-    } 
-    else if(choice == 3){
-        printf("Enter The Number with whom You want to Search the history of: ");
-        unsigned long long phone_search = 0;
-        while(phone_search == 0){
-            phone_search = get_unsignedlonglong();
-            /*int check = phone_search/pow(10,9);            //This Checks The phone_no
-    		if( check != 9) {
-    			printf("-------------Phone Number Must Contain 10 digits and Start with 9-------------\n\nPhone Number: ");
-    			phone_search = 0;
-    		}*/
-        }
-        graphics_cnt = 0;
-        printf("\n\nVoice Call History:\n");
-        display_headings(0,0);
-        for(int i = 0 ; i<Data_cnt ; i++){
-            if(D[i].duration != 0 && D[i].by == phone_no && D[i].to == phone_search){
-                display_data(0,0,D[i]);                
-            }
-        }
-        graphics_cnt = 0;
-        printf("\n\nSMS History:\n");
-        display_headings(1,0);
-        for(int i = 0 ; i<Data_cnt ; i++){
-            if(D[i].duration == 0 && D[i].by == phone_no && D[i].to == phone_search){
-                display_data(1,0,D[i]);                
-            }
-        }
-        
-        printf("\n\nPress Enter To Continue:");
-        getchar();
-        getchar();
-    } 
-    else if(choice == 4){
-        float sum = 0;
-        graphics_cnt = 0;
-        printf("\n\nVoice Call Overview:\n");
-        display_headings(0,3);
-        for(int i = 0 ; i<Data_cnt ; i++){
-            if(D[i].duration != 0 && D[i].by == phone_no && D[i].amount != 0){
-                display_data(0,3,D[i]);  
-                sum += D[i].amount;
-            }
-        }
-        graphics_cnt = 0;
-        printf("\n\nSMS Overview:\n");
-        display_headings(1,3);
-        for(int i = 0 ; i<Data_cnt ; i++){
-            if(D[i].duration == 0 && D[i].by == phone_no && D[i].amount != 0){
-                display_data(1,3,D[i]);     
-                sum += D[i].amount;
-            }
-        } 
-        
-        printf("\n\nYour Amount to be paid will be %g",sum);
-        
-        printf("\n\nPress Enter To Continue:");
-        getchar();
-        getchar();
-    }
-    else(choice == 5){
-        
-    }
+    if (choice == 1) { add_record(D); }
+    else if(choice == 2){ view_records(D); } 
+    else if(choice == 3){ search_record(D); } 
+    else if(choice == 4){ payment_overview(D); }
+    else if(choice == 5){ initiate_payment(D); }
     else if (choice > 6) {
         printf("\n--------Invalid Choice--------\n\n");
         goto re;
     }
-
     // Updating the file before exiting or going to re:
     fp = fopen("telecom_data.dat", "wb");
     if (fp == NULL) {
@@ -240,9 +160,7 @@ re:
     }
     fclose(fp);
 
-    if (choice == 6) {
-        exit(0);
-    }
+    if (choice == 6) { exit(0); }
     goto re;
 }
 
@@ -360,6 +278,138 @@ void add_record(struct Telecom_data D[]){
 	}
 }
 
+
+void view_records(struct Telecom_data D[]){
+    graphics_cnt = 0;
+    printf("\n\nVoice Call History:\n");
+    display_headings(0,0);
+    for(int i = 0 ; i<Data_cnt ; i++){
+        if(D[i].duration != 0 && D[i].by == phone_no){
+            display_data(0,0,D[i]);                
+        }
+    }
+    graphics_cnt = 0;
+    printf("\n\nSMS History:\n");
+    display_headings(1,0);
+    for(int i = 0 ; i<Data_cnt ; i++){
+        if(D[i].duration == 0 && D[i].by == phone_no){
+            display_data(1,0,D[i]);                
+        }
+    }
+    
+    printf("\n\nPress Enter To Continue:");
+    getchar();
+    getchar();
+}
+
+
+void search_record(struct Telecom_data D[]){
+    printf("Enter The Number with whom You want to Search the history of: ");
+    unsigned long long phone_search = 0;
+    while(phone_search == 0){
+        phone_search = get_unsignedlonglong();
+        /*int check = phone_search/pow(10,9);            //This Checks The phone_no
+		if( check != 9) {
+			printf("-------------Phone Number Must Contain 10 digits and Start with 9-------------\n\nPhone Number: ");
+			phone_search = 0;
+		}*/
+    }
+    graphics_cnt = 0;
+    printf("\n\nVoice Call History:\n");
+    display_headings(0,0);
+    for(int i = 0 ; i<Data_cnt ; i++){
+        if(D[i].duration != 0 && D[i].by == phone_no && D[i].to == phone_search){
+            display_data(0,0,D[i]);                
+        }
+    }
+    graphics_cnt = 0;
+    printf("\n\nSMS History:\n");
+    display_headings(1,0);
+    for(int i = 0 ; i<Data_cnt ; i++){
+        if(D[i].duration == 0 && D[i].by == phone_no && D[i].to == phone_search){
+            display_data(1,0,D[i]);                
+        }
+    }
+    
+    printf("\n\nPress Enter To Continue:");
+    getchar();
+    getchar();
+}
+
+
+void payment_overview(struct Telecom_data D[]){
+    float sum = 0;
+    graphics_cnt = 0;
+    printf("\n\nVoice Call Overview:\n");
+    display_headings(0,3);
+    for(int i = 0 ; i<Data_cnt ; i++){
+        if(D[i].duration != 0 && D[i].by == phone_no && D[i].amount != 0){
+            display_data(0,3,D[i]);  
+            sum += D[i].amount;
+        }
+    }
+    graphics_cnt = 0;
+    printf("\n\nSMS Overview:\n");
+    display_headings(1,3);
+    for(int i = 0 ; i<Data_cnt ; i++){
+        if(D[i].duration == 0 && D[i].by == phone_no && D[i].amount != 0){
+            display_data(1,3,D[i]);     
+            sum += D[i].amount;
+        }
+    } 
+    
+    printf("\n\nYour Amount to be paid will be %g",sum);
+    
+    printf("\n\nPress Enter To Continue:");
+    getchar();
+    getchar();
+}
+
+
+void initiate_payment(struct Telecom_data D[]){
+    float sum = 0;
+    for(int i = 0 ; i<Data_cnt ; i++){
+        if(D[i].by == phone_no && D[i].amount != 0){ 
+            sum += D[i].amount;
+        }
+    }
+    printf("\n\n\n-------------------------------------------------------\n");
+    printf("|                    TELECOM SYSTEM                   |\n");
+    printf("-------------------------------------------------------\n");
+    printf("|                                                     |\n");
+    printf("|    Total Bill = NRs. %g\n",sum);
+    if_more_pay:
+    printf("|                                                     |\n");
+    printf("|    Amount You would like to pay: NRs. ");
+    float Amount_paid;
+    scanf(" %f",&Amount_paid);             //Value Error might occour incase of input string
+    if(Amount_paid > sum || Amount_paid<0){
+        printf("-------Amount Must be less or equal to %g",sum);
+    }
+    printf("|                                                     |\n");
+    printf("-------------------------------------------------------\n");
+    printf("|   Thank you for choosing our service!               |\n");
+    printf("|                                                     |\n");
+    printf("|   For further assistance, contact: 9876543210       |\n");
+    printf("-------------------------------------------------------\n");
+
+    for(int i=0 ; i<Data_cnt ; i++){
+    	//When Amount paid is less than required payment
+    	if(Amount_paid - D[i].amount < 0){    
+    		D[i].amount -= Amount_paid;
+    		break;
+    	}
+    	else{
+    		Amount_paid -= D[i].amount;
+    		D[i].amount = 0;
+    	}
+    }
+}
+
+
+
+
+
 /*********************************************************
  (0,0) -> SN To Time Call_Duration
  (1,0) -> Sn To Time SMS Length
@@ -377,7 +427,7 @@ void display_headings(int n1, int n2){
     if(n1 == 0){printf("Call Duration");}
     else if(n1 == 1){printf("SMS Length");}
     print_space(2);
-    if(n2 == 3){printf("Amount(NRs)");}
+    if(n2 == 3){printf("Amount(NRs)[Not Paid]");}
 }
 
 void display_data(int n1, int n2,struct Telecom_data D){
@@ -413,5 +463,4 @@ void* check_input(void* arg) {
     stop = true; // Set the flag to true when Enter is pressed
     return NULL;
 }
-
 
