@@ -222,8 +222,10 @@ void add_record(struct Telecom_data D[]){
     
         time(&end); // Get the end time
         diff = difftime(end, start);
-    
-         printf("\n\nYou Have called %llu for %g seconds Costing you NRs.%g\n",phone_call,diff,diff*P_charge );
+        
+        stop = false;       
+        
+        printf("\n\nYou Have called %llu for %g seconds Costing you NRs.%g\n",phone_call,diff,diff*P_charge );
     
         // Join the input thread (cleanup)
         pthread_join(input_thread, NULL);
