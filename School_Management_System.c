@@ -601,7 +601,6 @@ void print_in_table(struct Students S[], int num, char sn){
 int if_no_data(){
     if(Total_std == 0){
         printf("\nNo Data Are Stored.\nDo you Want to add data?(y/n)");
-        getchar();
         if(getchar() == 'y'){
             return 1;
         }
