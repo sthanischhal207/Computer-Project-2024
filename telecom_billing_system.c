@@ -3,7 +3,7 @@
 #include <string.h>		// String library for operations like strcmp, strcpy, etc.
 #include <ctype.h>		// Character type library for functions like isdigit, isspace
 #include <math.h>		// Math library for mathematical operations like pow
-#include <unistd.h>     // for sleep()
+#include <unistd.h>     	// for sleep()
 #include <pthread.h>
 #include <stdbool.h>
 #include "for_all.h"	// Custom header file with utility functions and declarations
@@ -48,11 +48,11 @@ int main(){
     phone_no = 0;
     while(phone_no == 0){
         phone_no = get_unsignedlonglong();
-        /*int check = phone_no/pow(10,9);            //This Checks The phone_no
+        int check = phone_no/pow(10,9);            //This Checks The phone_no
 		if( check != 9) {
 			printf("-------------Phone Number Must Contain 10 digits and Start with 9-------------\n\nPhone Number: ");
 			phone_no = 0;
-		}*/
+		}
     }
     home_page();
     return 0;
@@ -103,16 +103,6 @@ void home_page() {
     fclose(fp);
     
 re:
-    /*for (int i = 0 ; i < Data_cnt; i++) {
-        printf("%llu \n %llu \n %s \n %f \n %f \n %s \n",
-	                   D[i].by,
-	                   D[i].to,
-	                   D[i].start,
-	                   D[i].duration,
-	                   D[i].amount,
-	                   D[i].SMS);
-    }
-    */
     // Home Page Graphics
     printf("\n\n\n-------------------------------------------------------\n");
     printf("|                    TELECOM SYSTEM                   |\n");
@@ -190,11 +180,11 @@ void add_record(struct Telecom_data D[]){
         unsigned long long phone_call = 0;
         while(phone_call == 0){
             phone_call = get_unsignedlonglong();
-            /*int check1 = phone_call/pow(10,9);            //This Checks The phone_no
+            int check1 = phone_call/pow(10,9);            //This Checks The phone_no
     		if( check1 != 9) {
     			printf("-------------Phone Number Must Contain 10 digits and Start with 9-------------\n\nPhone Number: ");
     			phone_call = 0;
-    		}*/
+    		}
         }
 	    time_t start, end;
         double diff;
@@ -246,11 +236,11 @@ void add_record(struct Telecom_data D[]){
         unsigned long long phone_call = 0;
         while(phone_call == 0){
             phone_call = get_unsignedlonglong();
-            /*int check1 = phone_call/pow(10,9);            //This Checks The phone_no
+            int check1 = phone_call/pow(10,9);            //This Checks The phone_no
     		if( check1 != 9) {
     			printf("-------------Phone Number Must Contain 10 digits and Start with 9-------------\n\nPhone Number: ");
     			phone_call = 0;
-    		}*/
+    		}
         }
         char SMS[10000];
         printf("Enter the Message: ");
@@ -310,11 +300,11 @@ void search_record(struct Telecom_data D[]){
     unsigned long long phone_search = 0;
     while(phone_search == 0){
         phone_search = get_unsignedlonglong();
-        /*int check = phone_search/pow(10,9);            //This Checks The phone_no
+        int check = phone_search/pow(10,9);            //This Checks The phone_no
 		if( check != 9) {
 			printf("-------------Phone Number Must Contain 10 digits and Start with 9-------------\n\nPhone Number: ");
 			phone_search = 0;
-		}*/
+		}
     }
     graphics_cnt = 0;
     printf("\n\nVoice Call History:\n");
@@ -469,4 +459,3 @@ void* check_input(void* arg) {
     stop = true; // Set the flag to true when Enter is pressed
     return NULL;
 }
-
